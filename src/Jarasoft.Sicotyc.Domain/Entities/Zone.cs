@@ -8,6 +8,11 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public Zone(Guid zoneId, string name, string? description, bool isActive, Tracking? tracking = null)
             : base(zoneId)
         {
+            CompanyZones = new List<CompanyZone>();
+            OriginFreightRates = new List<FreightRate>();
+            DestinationFreightRates = new List<FreightRate>();
+            OriginNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+            DestinationNegotiatedFreightRates = new List<NegotiatedFreightRate>();
             Name = name;
             Description = description;
             IsActive = isActive;
@@ -18,6 +23,12 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public string? Description { get; private set; }
         public bool IsActive { get; private set; }
         public Tracking? Tracking { get; private set; }
+
+        public ICollection<CompanyZone> CompanyZones { get; private set; }
+        public ICollection<FreightRate> OriginFreightRates { get; private set; }
+        public ICollection<FreightRate> DestinationFreightRates { get; private set; }
+        public ICollection<NegotiatedFreightRate> OriginNegotiatedFreightRates { get; private set; }
+        public ICollection<NegotiatedFreightRate> DestinationNegotiatedFreightRates { get; private set; }
 
         public void Update(string name, string? description, Guid? updatedBy = null)
         {

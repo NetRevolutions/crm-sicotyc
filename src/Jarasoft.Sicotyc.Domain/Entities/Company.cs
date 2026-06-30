@@ -20,6 +20,18 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             )
             : base(companyId)
         {
+            Districts = new List<District>();
+            Drivers = new List<Driver>();
+            FreightRates = new List<FreightRate>();
+            ClientNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+            TransportNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+            Quotes = new List<Quote>();
+            ClientQuoteTransportOffers = new List<QuoteTransportOffer>();
+            TransportQuoteTransportOffers = new List<QuoteTransportOffer>();
+            UserCompanies = new List<UserCompany>();
+            Vehicles = new List<Vehicle>();
+            Warehouses = new List<Warehouse>();
+            CompanyZones = new List<CompanyZone>();
             CompanyTypeId = companyTypeId;
             BusinessName = businessName;
             TradeName = tradeName;
@@ -46,7 +58,19 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 
         // Relationships
         public Guid CompanyTypeId { get; private set; }
-        public CompanyType? CompanyType { get; private set; }                
+        public CompanyType? CompanyType { get; private set; }
+        public ICollection<CompanyZone> CompanyZones { get; private set; } = new List<CompanyZone>();
+        public ICollection<District> Districts { get; private set; } = new List<District>();
+        public ICollection<Driver> Drivers { get; private set; } = new List<Driver>();
+        public ICollection<FreightRate> FreightRates { get; private set; } = new List<FreightRate>();
+        public ICollection<NegotiatedFreightRate> ClientNegotiatedFreightRates { get; private set; } = new List<NegotiatedFreightRate>();
+        public ICollection<NegotiatedFreightRate> TransportNegotiatedFreightRates { get; private set; } = new List<NegotiatedFreightRate>();
+        public ICollection<Quote> Quotes { get; private set; } = new List<Quote>();
+        public ICollection<QuoteTransportOffer> ClientQuoteTransportOffers { get; private set; } = new List<QuoteTransportOffer>();
+        public ICollection<QuoteTransportOffer> TransportQuoteTransportOffers { get; private set; } = new List<QuoteTransportOffer>();
+        public ICollection<UserCompany> UserCompanies { get; private set; } = new List<UserCompany>();
+        public ICollection<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
+        public ICollection<Warehouse> Warehouses { get; private set; } = new List<Warehouse>();
 
         // Update basic information
         public void UpdateBasicInfo(BusinessName businessName, TradeName tradeName, Ruc ruc, Guid? updatedBy = null)

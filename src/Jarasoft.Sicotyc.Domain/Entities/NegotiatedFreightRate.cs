@@ -74,6 +74,13 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             Tracking = Helper.TouchUpdated(Tracking, updatedBy);
         }
 
+        public void SetFreightRate(FreightRate? freightRate, Guid? updatedBy = null)
+        {
+            FreightRate = freightRate;
+            FreightRateId = freightRate?.Id ?? FreightRateId;
+            Tracking = Helper.TouchUpdated(Tracking, updatedBy);
+        }
+
         public void SetRelations(
             FreightRate? freightRate,
             Company? transportCompany,

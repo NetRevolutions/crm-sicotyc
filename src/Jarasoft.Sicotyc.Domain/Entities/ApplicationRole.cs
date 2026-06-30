@@ -7,6 +7,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public ApplicationRole()
         {
             MenuOptionRoles = new List<MenuOptionRole>();
+            Users = new List<ApplicationUser>();
         }
 
         // Object Values
@@ -14,5 +15,6 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 
         // Relationships
         public ICollection<MenuOptionRole> MenuOptionRoles { get; private set; }
+        public ICollection<ApplicationUser> Users { get; private set; }
     }
 }

@@ -13,6 +13,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             Tracking? tracking = null)
             : base(licenseTypeId)
         {
+            Drivers = new List<Driver>();
             Name = name;
             Code = code;
             Description = description;
@@ -23,6 +24,8 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public string Code { get; private set; }
         public string? Description { get; private set; }
         public Tracking? Tracking { get; private set; }
+
+        public ICollection<Driver> Drivers { get; private set; }
 
         public void Update(string name, string code, string? description, Guid? updatedBy = null)
         {
