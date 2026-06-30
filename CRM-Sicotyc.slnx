@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="src/Jarasoft.Sicotyc.Api/Jarasoft.Sicotyc.Api.csproj" />
+  <Project Path="src/Jarasoft.Sicotyc.Application/Jarasoft.Sicotyc.Application.csproj" />
+  <Project Path="src/Jarasoft.Sicotyc.Domain/Jarasoft.Sicotyc.Domain.csproj" />
+  <Project Path="src/Jarasoft.Sicotyc.Infraestructure/Jarasoft.Sicotyc.Infraestructure.csproj" />
+</Solution>
