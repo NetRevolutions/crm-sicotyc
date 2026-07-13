@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Jarasoft.Sicotyc.Domain\Jarasoft.Sicotyc.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

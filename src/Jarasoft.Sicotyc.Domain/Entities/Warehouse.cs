@@ -26,6 +26,10 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public bool IsActive { get; private set; }
         public Tracking? Tracking { get; private set; }
 
+        public Company? Company { get; private set; }
+        public CompanyType? CompanyType { get; private set; }
+        public District? District { get; private set; }
+
         public void UpdateContact(string name, string address, Guid? updatedBy = null)
         {
             Name = name;
@@ -43,6 +47,17 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public void SetDistrict(Guid districtId, Guid? updatedBy = null)
         {
             DistrictId = districtId;
+            Tracking = Helper.TouchUpdated(Tracking, updatedBy);
+        }
+
+        public void SetRelations(Company? company, CompanyType? companyType, District? district, Guid? updatedBy = null)
+        {
+            Company = company;
+            CompanyId = company?.Id ?? CompanyId;
+            CompanyType = companyType;
+            CompanyTypeId = companyType?.Id ?? CompanyTypeId;
+            District = district;
+            DistrictId = district?.Id ?? DistrictId;
             Tracking = Helper.TouchUpdated(Tracking, updatedBy);
         }
 

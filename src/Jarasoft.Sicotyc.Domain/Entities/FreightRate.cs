@@ -23,6 +23,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             Tracking? tracking = null)
             : base(freightRateId)
         {
+            NegotiatedFreightRates = new List<NegotiatedFreightRate>();
             TransportCompanyId = transportCompanyId;
             CompanyTypeId = companyTypeId;
             ServiceTypeId = serviceTypeId;
@@ -60,6 +61,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public Zone? OriginZone { get; private set; }
         public Zone? DestinationZone { get; private set; }
         public VehicleType? VehicleType { get; private set; }
+        public ICollection<NegotiatedFreightRate> NegotiatedFreightRates { get; private set; }
 
         public void UpdateRate(
             decimal price,
