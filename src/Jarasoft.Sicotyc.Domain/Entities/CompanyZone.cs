@@ -5,6 +5,10 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class CompanyZone : Entity
     {
+    private CompanyZone()
+    {
+    }
+
         public CompanyZone(Guid companyZoneId, Guid companyId, Guid companyTypeId, Guid zoneId, Tracking? tracking = null)
             : base(companyZoneId)
         {

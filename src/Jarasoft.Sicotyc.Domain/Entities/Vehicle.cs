@@ -5,6 +5,13 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class Vehicle : Entity
     {
+    private Vehicle()
+    {
+        PlateNumber = string.Empty;
+        Brand = string.Empty;
+        Model = string.Empty;
+    }
+
         public Vehicle(
             Guid vehicleId,
             Guid companyId,

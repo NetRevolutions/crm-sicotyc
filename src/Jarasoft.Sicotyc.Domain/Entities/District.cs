@@ -5,6 +5,11 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class District : Entity
     {
+    private District()
+    {
+        Warehouses = new List<Warehouse>();
+    }
+
         public District(Guid districtId, Guid cityId, string name, string ubigeo, Guid? companyId = null, Tracking? tracking = null)
             : base(districtId)
         {

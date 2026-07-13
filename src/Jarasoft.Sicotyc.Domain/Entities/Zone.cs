@@ -5,6 +5,16 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class Zone : Entity
     {
+    private Zone()
+    {
+        CompanyZones = new List<CompanyZone>();
+        OriginFreightRates = new List<FreightRate>();
+        DestinationFreightRates = new List<FreightRate>();
+        OriginNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        DestinationNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        Name = string.Empty;
+    }
+
         public Zone(Guid zoneId, string name, string? description, bool isActive, Tracking? tracking = null)
             : base(zoneId)
         {
