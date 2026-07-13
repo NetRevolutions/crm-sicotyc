@@ -46,6 +46,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public Tracking? Tracking { get; private set; }
 
         public Quote? Quote { get; private set; }
+        public ApplicationUser? RequestedByUser { get; private set; }
         public Company? ClientCompany { get; private set; }
         public CompanyType? CompanyType { get; private set; }
         public ServiceType? ServiceType { get; private set; }
@@ -67,6 +68,13 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public void SetStatus(string status, Guid? updatedBy = null)
         {
             Status = status;
+            Tracking = Helper.TouchUpdated(Tracking, updatedBy);
+        }
+
+        public void SetRequestedByUser(ApplicationUser? requestedByUser, Guid? updatedBy = null)
+        {
+            RequestedByUser = requestedByUser;
+            RequestedByUserId = requestedByUser?.Id ?? RequestedByUserId;
             Tracking = Helper.TouchUpdated(Tracking, updatedBy);
         }
 

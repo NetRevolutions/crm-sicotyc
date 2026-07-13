@@ -19,6 +19,7 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             Tracking? tracking = null)
             : base(quoteId)
         {
+            QuoteTransportOffers = new List<QuoteTransportOffer>();
             RequestedByUserId = requestedByUserId;
             ClientCompanyId = clientCompanyId;
             CompanyTypeId = companyTypeId;
@@ -42,9 +43,11 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public string Status { get; private set; }
         public Tracking? Tracking { get; private set; }
 
+        public ApplicationUser? RequestedByUser { get; private set; }
         public Company? ClientCompany { get; private set; }
         public CompanyType? CompanyType { get; private set; }
         public ServiceType? ServiceType { get; private set; }
+        public ICollection<QuoteTransportOffer> QuoteTransportOffers { get; private set; } = new List<QuoteTransportOffer>();
 
         public void UpdateRequest(
             DateTime serviceDate,
@@ -87,6 +90,13 @@ namespace Jarasoft.Sicotyc.Domain.Entities
             CompanyTypeId = companyType?.Id ?? CompanyTypeId;
             ServiceType = serviceType;
             ServiceTypeId = serviceType?.Id ?? ServiceTypeId;
+            Tracking = Helper.TouchUpdated(Tracking, updatedBy);
+        }
+
+        public void SetRequestedByUser(ApplicationUser? requestedByUser, Guid? updatedBy = null)
+        {
+            RequestedByUser = requestedByUser;
+            RequestedByUserId = requestedByUser?.Id ?? RequestedByUserId;
             Tracking = Helper.TouchUpdated(Tracking, updatedBy);
         }
 
