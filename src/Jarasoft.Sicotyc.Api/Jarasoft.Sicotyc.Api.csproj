@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Jarasoft.Sicotyc.Application\Jarasoft.Sicotyc.Application.csproj" />
     <ProjectReference Include="..\Jarasoft.Sicotyc.Infraestructure\Jarasoft.Sicotyc.Infraestructure.csproj" />
   </ItemGroup>
 
