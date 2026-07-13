@@ -1,4 +1,5 @@
 using Jarasoft.Sicotyc.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,6 +35,12 @@ public sealed class ApplicationDbContext : IdentityDbContext<ApplicationUser, Ap
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<IdentityUserClaim<Guid>>().ToTable("ApplicationUserClaims");
+        builder.Entity<IdentityUserLogin<Guid>>().ToTable("ApplicationUserLogins");
+        builder.Entity<IdentityUserToken<Guid>>().ToTable("ApplicationUserTokens");
+        builder.Entity<IdentityRoleClaim<Guid>>().ToTable("ApplicationRoleClaims");
+        builder.Entity<IdentityUserRole<Guid>>().ToTable("ApplicationUserRoles");
 
         builder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
     }

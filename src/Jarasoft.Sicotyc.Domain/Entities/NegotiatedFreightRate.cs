@@ -5,6 +5,10 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class NegotiatedFreightRate : Entity
     {
+    private NegotiatedFreightRate()
+    {
+    }
+
         public NegotiatedFreightRate(
             Guid negotiatedFreightRateId,
             Guid freightRateId,

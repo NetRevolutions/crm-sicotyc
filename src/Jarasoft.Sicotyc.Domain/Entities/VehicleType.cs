@@ -5,6 +5,14 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class VehicleType : Entity
     {
+    private VehicleType()
+    {
+        FreightRates = new List<FreightRate>();
+        NegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        Vehicles = new List<Vehicle>();
+        Name = string.Empty;
+    }
+
         public VehicleType(Guid vehicleTypeId, string name, Tracking? tracking = null)
             : base(vehicleTypeId)
         {

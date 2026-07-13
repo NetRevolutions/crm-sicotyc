@@ -5,6 +5,19 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class CompanyType : Entity
     {
+    private CompanyType()
+    {
+        Companies = new List<Company>();
+        CompanyZones = new List<CompanyZone>();
+        Drivers = new List<Driver>();
+        FreightRates = new List<FreightRate>();
+        NegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        Quotes = new List<Quote>();
+        QuoteTransportOffers = new List<QuoteTransportOffer>();
+        Vehicles = new List<Vehicle>();
+        Warehouses = new List<Warehouse>();
+    }
+
         public CompanyType(Guid id) : base(id)
         {
             Companies = new List<Company>();
