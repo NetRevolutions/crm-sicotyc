@@ -6,8 +6,35 @@ namespace Jarasoft.Sicotyc.Api.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public sealed class UsersController(ISystemUserRegistrationService registrationService) : ControllerBase
+public sealed class UsersController(
+    ISystemUserRegistrationService registrationService,
+    IApplicationUserQueryService userQueryService) : ControllerBase
 {
+    [HttpGet("{id:guid}")]
+    [ProducesResponseType<ApplicationUserResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<ApplicationUserResponse>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var user = await userQueryService.GetByIdAsync(id, cancellationToken);
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new ApplicationUserResponse(
+            user.Id,
+            user.UserName,
+            user.Email,
+            user.PhoneNumber,
+            user.FirstName,
+            user.LastName,
+            user.DocumentType,
+            user.DocumentNumber,
+            user.ApplicationRoleId,
+            user.ApplicationRoleName,
+            user.CompanyIds));
+    }
+
     [HttpPost("register")]
     [ProducesResponseType<RegisterSystemUserResponse>(StatusCodes.Status201Created)]
     [ProducesResponseType<RegisterSystemUserResponse>(StatusCodes.Status400BadRequest)]
@@ -48,7 +75,7 @@ public sealed class UsersController(ISystemUserRegistrationService registrationS
 
         if (result.Succeeded)
         {
-            return CreatedAtAction(nameof(RegisterAsync), response);
+            return CreatedAtAction(nameof(GetByIdAsync), new { id = result.UserId }, response);
         }
 
         if (result.RequiresCompanyContact)

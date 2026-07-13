@@ -31,6 +31,7 @@ public static class DependencyInjection
             .AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddScoped<IApplicationRoleQueryService, ApplicationRoleQueryService>();
+        services.AddScoped<IApplicationUserQueryService, ApplicationUserQueryService>();
         services.AddScoped<ISystemUserRegistrationService, SystemUserRegistrationService>();
 
         return services;
