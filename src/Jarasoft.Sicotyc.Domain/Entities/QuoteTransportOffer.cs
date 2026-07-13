@@ -5,6 +5,11 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class QuoteTransportOffer : Entity
     {
+    private QuoteTransportOffer()
+    {
+        Status = string.Empty;
+    }
+
         public QuoteTransportOffer(
             Guid quoteTransportOfferId,
             Guid quoteId,

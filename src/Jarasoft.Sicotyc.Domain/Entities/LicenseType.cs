@@ -5,6 +5,11 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class LicenseType : Entity
     {
+    private LicenseType()
+    {
+        Drivers = new List<Driver>();
+    }
+
         public LicenseType(
             Guid licenseTypeId,
             string name,

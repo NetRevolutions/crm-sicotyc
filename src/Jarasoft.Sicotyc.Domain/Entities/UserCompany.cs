@@ -2,6 +2,10 @@
 {
     public sealed class UserCompany
     {
+    private UserCompany()
+    {
+    }
+
         public UserCompany(Guid userId, Guid companyId)
         {
             UserId = userId;

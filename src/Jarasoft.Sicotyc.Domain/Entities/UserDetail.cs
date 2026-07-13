@@ -5,6 +5,10 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class UserDetail : Entity
     {
+    private UserDetail()
+    {
+    }
+
         public UserDetail(
             Guid userId,
             DateOfBirth dateOfBirth,

@@ -5,6 +5,12 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class Warehouse : Entity
     {
+    private Warehouse()
+    {
+        Name = string.Empty;
+        Address = string.Empty;
+    }
+
         public Warehouse(Guid warehouseId, Guid companyId, Guid companyTypeId, Guid districtId,
             string name, string address, bool isActive, Tracking? tracking = null)
             : base(warehouseId)

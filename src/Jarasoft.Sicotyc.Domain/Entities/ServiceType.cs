@@ -5,6 +5,16 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class ServiceType : Entity
     {
+    private ServiceType()
+    {
+        FreightRates = new List<FreightRate>();
+        NegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        Quotes = new List<Quote>();
+        QuoteTransportOffers = new List<QuoteTransportOffer>();
+        Name = string.Empty;
+        Code = string.Empty;
+    }
+
         public ServiceType(
             Guid serviceTypeId,
             string name,

@@ -5,6 +5,10 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class Driver : Entity
     {
+    private Driver()
+    {
+    }
+
         public Driver(
             Guid driverId,
             Guid companyId,

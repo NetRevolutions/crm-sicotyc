@@ -5,6 +5,22 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class Company : Entity
     {
+    private Company()
+    {
+        Districts = new List<District>();
+        Drivers = new List<Driver>();
+        FreightRates = new List<FreightRate>();
+        ClientNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        TransportNegotiatedFreightRates = new List<NegotiatedFreightRate>();
+        Quotes = new List<Quote>();
+        ClientQuoteTransportOffers = new List<QuoteTransportOffer>();
+        TransportQuoteTransportOffers = new List<QuoteTransportOffer>();
+        UserCompanies = new List<UserCompany>();
+        Vehicles = new List<Vehicle>();
+        Warehouses = new List<Warehouse>();
+        CompanyZones = new List<CompanyZone>();
+    }
+
         public Company(
             Guid companyId,
             Guid companyTypeId,
