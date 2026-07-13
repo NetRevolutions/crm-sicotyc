@@ -1,0 +1,7 @@
+Roles:
+1. SuperAdministrador
+2. AdministradorEmpresa
+3. Usuario
+4. Coordinador
+5. Chofer
+6. Facturacion

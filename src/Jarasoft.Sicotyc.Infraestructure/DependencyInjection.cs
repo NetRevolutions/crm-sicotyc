@@ -1,5 +1,8 @@
+using Jarasoft.Sicotyc.Application.Roles;
+using Jarasoft.Sicotyc.Application.Users;
 using Jarasoft.Sicotyc.Domain.Entities;
 using Jarasoft.Sicotyc.Infraestructure.Persistence;
+using Jarasoft.Sicotyc.Infraestructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -26,6 +29,10 @@ public static class DependencyInjection
             .AddIdentityCore<ApplicationUser>()
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
+
+        services.AddScoped<IApplicationRoleQueryService, ApplicationRoleQueryService>();
+        services.AddScoped<IApplicationUserQueryService, ApplicationUserQueryService>();
+        services.AddScoped<ISystemUserRegistrationService, SystemUserRegistrationService>();
 
         return services;
     }

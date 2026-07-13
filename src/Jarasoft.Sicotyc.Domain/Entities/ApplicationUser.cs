@@ -6,6 +6,33 @@ namespace Jarasoft.Sicotyc.Domain.Entities
 {
     public sealed class ApplicationUser: IdentityUser<Guid>
     {
+        public static ApplicationUser Register(
+            Guid userId,
+            string userName,
+            string email,
+            string phoneNumber,
+            FirstName firstName,
+            LastName lastName,
+            DocumentIdentity documentIdentity)
+        {
+            var user = new ApplicationUser
+            {
+                Id = userId,
+                UserName = userName,
+                NormalizedUserName = userName.ToUpperInvariant(),
+                Email = email,
+                NormalizedEmail = email.ToUpperInvariant(),
+                PhoneNumber = phoneNumber,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                FirstName = firstName,
+                LastName = lastName,
+                DocumentIdentity = documentIdentity,
+                Tracking = new Tracking(DateTime.UtcNow, userId, null, null, false, null, null)
+            };
+
+            return user;
+        }
+
         public ApplicationUser()
         {
             Quotes = new List<Quote>();

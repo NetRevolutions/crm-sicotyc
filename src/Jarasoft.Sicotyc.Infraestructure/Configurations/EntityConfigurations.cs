@@ -11,6 +11,14 @@ public sealed class ApplicationRoleConfiguration : IEntityTypeConfiguration<Appl
     {
         builder.ToTable("ApplicationRoles");
 
+        builder.HasData(
+            CreateRoleSeed(ApplicationRole.SuperAdministradorId, "SuperAdministrador"),
+            CreateRoleSeed(ApplicationRole.AdministradorEmpresaId, "AdministradorEmpresa"),
+            CreateRoleSeed(ApplicationRole.UsuarioId, "Usuario"),
+            CreateRoleSeed(ApplicationRole.CoordinadorId, "Coordinador"),
+            CreateRoleSeed(ApplicationRole.ChoferId, "Chofer"),
+            CreateRoleSeed(ApplicationRole.FacturacionId, "Facturacion"));
+
         builder.HasMany(entity => entity.Users)
             .WithOne(entity => entity.ApplicationRole)
             .HasForeignKey(entity => entity.ApplicationRoleId)
@@ -21,6 +29,15 @@ public sealed class ApplicationRoleConfiguration : IEntityTypeConfiguration<Appl
             .HasForeignKey(entity => entity.RoleId)
             .OnDelete(DeleteBehavior.Cascade);
     }
+
+    private static ApplicationRole CreateRoleSeed(Guid id, string name) =>
+        new()
+        {
+            Id = id,
+            Name = name,
+            NormalizedName = name.ToUpperInvariant(),
+            ConcurrencyStamp = id.ToString()
+        };
 }
 
 public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
