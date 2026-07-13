@@ -8,6 +8,8 @@ namespace Jarasoft.Sicotyc.Domain.Entities
     {
         public ApplicationUser()
         {
+            Quotes = new List<Quote>();
+            QuoteTransportOffers = new List<QuoteTransportOffer>();
             UserCompanies = new List<UserCompany>();
         }
 
@@ -35,9 +37,14 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         public Tracking? Tracking { get; private set; } // Este es un record para agrupar las propiedades de seguimiento
 
         // Relationships
+        public Guid? ApplicationRoleId { get; private set; }
+        public ApplicationRole? ApplicationRole { get; private set; }
+
         public Guid? UserDetailId { get; private set; }
         public UserDetail? UserDetail { get; private set; }
 
+        public ICollection<Quote> Quotes { get; private set; }
+        public ICollection<QuoteTransportOffer> QuoteTransportOffers { get; private set; }
         public ICollection<UserCompany> UserCompanies { get; private set; }
 
         public void UpdateIdentity(
@@ -66,6 +73,13 @@ namespace Jarasoft.Sicotyc.Domain.Entities
         {
             UserDetail = userDetail;
             UserDetailId = userDetail?.UserId;
+            Tracking = Common.Helper.TouchUpdated(Tracking, updatedBy);
+        }
+
+        public void SetApplicationRole(ApplicationRole? applicationRole, Guid? updatedBy = null)
+        {
+            ApplicationRole = applicationRole;
+            ApplicationRoleId = applicationRole?.Id;
             Tracking = Common.Helper.TouchUpdated(Tracking, updatedBy);
         }
 
