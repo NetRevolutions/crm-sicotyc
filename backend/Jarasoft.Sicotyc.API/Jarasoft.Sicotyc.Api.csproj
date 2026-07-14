@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Jarasoft.Sicotyc.Application\Jarasoft.Sicotyc.Application.csproj" />
-    <ProjectReference Include="..\Jarasoft.Sicotyc.Infraestructure\Jarasoft.Sicotyc.Infraestructure.csproj" />
+    <ProjectReference Include="..\Jarasoft.Sicotyc.Infrastructure\Jarasoft.Sicotyc.Infraestructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
