@@ -28,25 +28,26 @@ export class SidebarComponent {
 
   readonly currentRole: UserRole = 'Administrador';
 
+  // Get Dynamic Sidebar Sections based on the current role (future)
   readonly sections: SidebarSection[] = [
     {
-      label: 'Importacion',
+      label:'Solicitud Servicio', //'Importacion',
       icon: 'briefcase',
       children: [
         { label: 'Landing Page', path: '/dashboard' },
-        { label: 'Solicitud Servicio', path: '/clientes' }
+        // { label: 'Solicitud Servicio', path: '/clientes' }
       ],
       roles: ['Administrador', 'Supervisor']
     },
-    { label: 'Exportacion', icon: 'ship', roles: ['Administrador', 'Supervisor'] },
-    { label: 'Carga Suelta', icon: 'box', roles: ['Administrador', 'Supervisor'] },
+    // { label: 'Exportacion', icon: 'ship', roles: ['Administrador', 'Supervisor'] },
+    // { label: 'Carga Suelta', icon: 'box', roles: ['Administrador', 'Supervisor'] },
     { label: 'Evaluacion', icon: 'clipboard', roles: ['Administrador', 'Supervisor'] },
     { label: 'Orden de Trabajo', icon: 'wrench', roles: ['Administrador', 'Supervisor'] },
-    { label: 'Mantenimiento', icon: 'tool', roles: ['Administrador'] },
+    { label: 'Mantenimientos', icon: 'tool', roles: ['Administrador'] },
     { label: 'Reportes', icon: 'chart', roles: ['Administrador', 'Supervisor'] }
   ];
 
-  readonly expandedSections = new Set<string>(['Importacion']);
+  readonly expandedSections = new Set<string>(['Solicitud Servicio']);
 
   get visibleSections(): SidebarSection[] {
     return this.sections.filter((item) => item.roles.includes(this.currentRole));
