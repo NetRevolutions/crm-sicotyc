@@ -1,0 +1,102 @@
+<section class="space-y-4">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-semibold text-slate-800">Importacion</h2>
+            <p class="text-sm text-slate-500">Gestion de servicios de importacion</p>
+        </div>
+        <button class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+            + Nueva Solicitud
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <article class="rounded-lg border border-indigo-200 bg-indigo-50/70 p-4">
+            <p class="text-4xl font-bold text-indigo-600">24</p>
+            <p class="text-sm text-indigo-500">Solicitudes Activas</p>
+        </article>
+        <article class="rounded-lg border border-amber-200 bg-amber-50/70 p-4">
+            <p class="text-4xl font-bold text-amber-600">12</p>
+            <p class="text-sm text-amber-500">En Proceso</p>
+        </article>
+        <article class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
+            <p class="text-4xl font-bold text-emerald-600">8</p>
+            <p class="text-sm text-emerald-500">Completadas Hoy</p>
+        </article>
+        <article class="rounded-lg border border-rose-200 bg-rose-50/70 p-4">
+            <p class="text-4xl font-bold text-rose-600">4</p>
+            <p class="text-sm text-rose-500">Pendientes</p>
+        </article>
+    </div>
+
+    <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+        <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-slate-700">Solicitudes Recientes</h3>
+            <input class="rounded-md border border-slate-200 px-3 py-1.5 text-sm" placeholder="Buscar..." />
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-separate border-spacing-y-1 text-sm text-slate-700">
+                <thead>
+                    <tr class="text-left text-xs uppercase tracking-wide text-slate-500">
+                        <th class="px-3 py-2">N Solicitud</th>
+                        <th class="px-3 py-2">Cliente</th>
+                        <th class="px-3 py-2">Origen</th>
+                        <th class="px-3 py-2">Destino</th>
+                        <th class="px-3 py-2">Estado</th>
+                        <th class="px-3 py-2">Fecha</th>
+                        <th class="px-3 py-2">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                      <tr class="rounded bg-slate-50/80">
+                        <td class="px-3 py-2 text-indigo-600">SOL-2024-001</td><td class="px-3 py-2">Ransa Comercial S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Ate Vitarte</td><td class="px-3 py-2"><span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-600">En Proceso</span></td><td class="px-3 py-2">14/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
+                    </tr>
+                      <tr class="rounded bg-slate-50/80">
+                        <td class="px-3 py-2 text-indigo-600">SOL-2024-002</td><td class="px-3 py-2">DHL Supply Chain</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">La Victoria</td><td class="px-3 py-2"><span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">Pendiente</span></td><td class="px-3 py-2">14/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
+                    </tr>
+                      <tr class="rounded bg-slate-50/80">
+                        <td class="px-3 py-2 text-indigo-600">SOL-2024-003</td><td class="px-3 py-2">Neptunia S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">San Luis</td><td class="px-3 py-2"><span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Completado</span></td><td class="px-3 py-2">13/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
+                    </tr>
+                      <tr class="rounded bg-slate-50/80">
+                        <td class="px-3 py-2 text-indigo-600">SOL-2024-004</td><td class="px-3 py-2">Cosmos Agencia Maritima</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Los Olivos</td><td class="px-3 py-2"><span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-600">En Proceso</span></td><td class="px-3 py-2">13/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
+                    </tr>
+                      <tr class="rounded bg-slate-50/80">
+                        <td class="px-3 py-2 text-indigo-600">SOL-2024-005</td><td class="px-3 py-2">Unimar S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Surquillo</td><td class="px-3 py-2"><span class="rounded-full bg-rose-100 px-2 py-0.5 text-xs text-rose-600">Cancelado</span></td><td class="px-3 py-2">12/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <h3 class="mb-3 text-sm font-semibold text-slate-700">Ordenes de Trabajo Abiertas</h3>
+            <div class="space-y-3 text-sm">
+                <div class="rounded-md border border-slate-100 p-3">
+                    <p class="font-semibold text-indigo-600">OT-2024-047</p>
+                    <p class="text-slate-600">Contenedor 40' - Lima -> Ate</p>
+                    <p class="text-slate-500">Chofer: Carlos Quispe</p>
+                </div>
+                <div class="rounded-md border border-slate-100 p-3">
+                    <p class="font-semibold text-indigo-600">OT-2024-046</p>
+                    <p class="text-slate-600">Contenedor 20' - Callao -> La Victoria</p>
+                    <p class="text-slate-500">Chofer: Luis Mamani</p>
+                </div>
+                <div class="rounded-md border border-slate-100 p-3">
+                    <p class="font-semibold text-indigo-600">OT-2024-045</p>
+                    <p class="text-slate-600">Contenedor 40' - Callao -> Surquillo</p>
+                    <p class="text-slate-500">Chofer: Pedro Huanca</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
+            <h3 class="mb-3 text-sm font-semibold text-slate-700">Accesos Rapidos</h3>
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Nueva Solicitud</button>
+                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Orden de Trabajo</button>
+                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Ver Solicitudes</button>
+                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Reportes</button>
+            </div>
+        </section>
+    </div>
+</section>
