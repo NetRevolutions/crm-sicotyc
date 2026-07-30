@@ -35,7 +35,7 @@ export class SidebarComponent {
       icon: 'briefcase',
       children: [
         { label: 'Landing Page', path: '/dashboard' },
-        // { label: 'Solicitud Servicio', path: '/clientes' }
+        { label: 'Solicitud Servicio', path: '/clientes' }
       ],
       roles: ['Administrador', 'Supervisor']
     },
