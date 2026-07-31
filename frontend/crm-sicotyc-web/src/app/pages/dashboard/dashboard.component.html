@@ -1,150 +1,174 @@
 <section class="space-y-4">
-    <!-- <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-semibold text-slate-800">Importacion</h2>
-            <p class="text-sm text-slate-500">Gestion de servicios de importacion</p>
-        </div>
-        <button class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
-            + Nueva Solicitud
-        </button>
-    </div>
-
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <article class="rounded-lg border border-indigo-200 bg-indigo-50/70 p-4">
-            <p class="text-4xl font-bold text-indigo-600">24</p>
-            <p class="text-sm text-indigo-500">Solicitudes Activas</p>
-        </article>
-        <article class="rounded-lg border border-amber-200 bg-amber-50/70 p-4">
-            <p class="text-4xl font-bold text-amber-600">12</p>
-            <p class="text-sm text-amber-500">En Proceso</p>
-        </article>
-        <article class="rounded-lg border border-emerald-200 bg-emerald-50/70 p-4">
-            <p class="text-4xl font-bold text-emerald-600">8</p>
-            <p class="text-sm text-emerald-500">Completadas Hoy</p>
-        </article>
-        <article class="rounded-lg border border-rose-200 bg-rose-50/70 p-4">
-            <p class="text-4xl font-bold text-rose-600">4</p>
-            <p class="text-sm text-rose-500">Pendientes</p>
-        </article>
-    </div> -->
     <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
       <div class="mb-4 flex items-center justify-between">
           <h3 class="text-sm font-semibold text-slate-700">Solicitud de Servicio</h3>
           <!-- <input class="rounded-md border border-slate-200 px-3 py-1.5 text-sm" placeholder="Buscar..." /> -->
       </div>
       <form class="space-y-4">
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
           <div>
             <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Servicio <span class="text-rose-500">*</span></label>
             <select
               class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
-              (change)="onServiceChange($event)"
+              (change)="onChangeTipoServicio($event)"
             >
-              <option value="default" [selected]="selectedService === 'default'">Seleccionar...</option>
-              <option value="importacion" [selected]="selectedService === 'importacion'">Importacion</option>
-              <option value="exportacion" [selected]="selectedService === 'exportacion'">Exportacion</option>
-              <option value="carga-suelta" [selected]="selectedService === 'carga-suelta'">Carga Suelta</option>
+              <option value="default" [selected]="selectedTipoServicio === 'default'">Seleccionar...</option>
+              <option value="importacion" [selected]="selectedTipoServicio === 'importacion'">Importacion</option>
+              <option value="exportacion" [selected]="selectedTipoServicio === 'exportacion'">Exportacion</option>
+              <option value="traslado-interno" [selected]="selectedTipoServicio === 'traslado-interno'">Traslado Interno</option>
+              <option value="traccion" [selected]="selectedTipoServicio === 'traccion'">Traccion</option>
+              <option value="devolucion-vacios" [selected]="selectedTipoServicio === 'devolucion-vacios'">Devolucion de Vacios</option>
             </select>
           </div>
-          <!-- <div>
-            <label class="mb-1.5 block text-sm font-medium text-slate-700">Fecha Solicitud</label>
-            <input type="date" value="2024-07-14" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring" />
+          <div *ngIf="selectedTipoServicio !== 'default'">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Carga <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTipoCarga($event)"
+            >
+              <option value="default" [selected]="selectedTipoCarga === 'default'">Seleccionar...</option>
+              <option value="contenedor" [selected]="selectedTipoCarga === 'contenedor'">Contenedor</option>
+              <option value="carga-suelta" [selected]="selectedTipoCarga === 'carga-suelta'">Carga Suelta</option>
+              <option value="maquinaria-pesada" [selected]="selectedTipoCarga === 'maquinaria-pesada'">Maquinaria Pesada</option>
+              <option value="carga-sobredimensionada" [selected]="selectedTipoCarga === 'carga-sobredimensionada'">Carga Sobredimensionada</option>
+              <option value="proyecto-especial" [selected]="selectedTipoCarga === 'proyecto-especial'">Proyecto Especial</option>
+            </select>
           </div>
-          <div>
-            <label class="mb-1.5 block text-sm font-medium text-slate-700">N Solicitud</label>
-            <input type="text" value="SOL-2024-006" class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring" />
-          </div> -->
+          <div *ngIf="selectedTipoCarga === 'contenedor'">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Contenedor <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTipoContenedor($event)"
+            >
+              <option value="default" [selected]="selectedTipoContenedor === 'default'">Seleccionar...</option>
+              <option value="dry" [selected]="selectedTipoContenedor === 'dry'">Dry</option>
+              <option value="reefer" [selected]="selectedTipoContenedor === 'reefer'">Reefer</option>
+              <option value="open-top" [selected]="selectedTipoContenedor === 'open-top'">Open Top</option>
+              <option value="flat-rack" [selected]="selectedTipoContenedor === 'flat-rack'">Flat Rack</option>
+              <option value="tank" [selected]="selectedTipoContenedor === 'tank'">Tank</option>
+              <option value="high-cube" [selected]="selectedTipoContenedor === 'high-cube'">High Cube</option>
+            </select>
+          </div>
+          <div *ngIf="selectedTipoCarga === 'contenedor' && selectedTipoContenedor !== 'default'">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tamaño de Contenedor <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTamanioContenedor($event)"
+            >
+              <option value="20ft" [selected]="selectedTamanioContenedor === '20ft'">20 ft</option>
+              <option value="40ft" [selected]="selectedTamanioContenedor === '40ft'">40 ft</option>
+              <!-- <option value="45ft" [selected]="selectedTamanioContenedor === '45ft'">45 ft</option> -->
+            </select>
+          </div>
+          <div *ngIf="selectedTipoCarga === 'maquinaria-pesada'">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Maquinaria Pesada <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTipoMaquinariaPesada($event)"
+            >
+              <option value="default" [selected]="selectedTipoMaquinariaPesada === 'default'">Seleccionar...</option>
+              <option value="retro-excavadora" [selected]="selectedTipoMaquinariaPesada === 'retro-excavadora'">Retro Excavadora</option>
+              <option value="excavadora" [selected]="selectedTipoMaquinariaPesada === 'excavadora'">Excavadora</option>
+              <option value="cargador-frontal" [selected]="selectedTipoMaquinariaPesada === 'cargador-frontal'">Cargador Frontal</option>
+              <option value="rodillo" [selected]="selectedTipoMaquinariaPesada === 'rodillo'">Rodillo</option>
+              <option value="motoniveladora" [selected]="selectedTipoMaquinariaPesada === 'motoniveladora'">Motoniveladora</option>
+              <option value="tractor" [selected]="selectedTipoMaquinariaPesada === 'tractor'">Tractor</option>
+              <option value="otra" [selected]="selectedTipoMaquinariaPesada === 'otra'">Otra</option>
+            </select>
+          </div>
+          <div *ngIf="selectedTipoCarga === 'carga-sobredimensionada'">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Carga Sobredimensionada <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTipoCargaSobredimensionada($event)"
+            >
+              <option value="default" [selected]="selectedTipoCargaSobredimensionada === 'default'">Seleccionar...</option>
+              <option value="estructuras-metalicas" [selected]="selectedTipoCargaSobredimensionada === 'estructuras-metalicas'">Estructuras Metálicas</option>
+              <option value="transformadores" [selected]="selectedTipoCargaSobredimensionada === 'transformadores'">Transformadores</option>
+              <option value="tuberias" [selected]="selectedTipoCargaSobredimensionada === 'tuberias'">Tuberías</option>
+              <option value="tanques" [selected]="selectedTipoCargaSobredimensionada === 'tanques'">Tanques</option>
+              <option value="bobinas" [selected]="selectedTipoCargaSobredimensionada === 'bobinas'">Bobinas</option>
+              <option value="otra" [selected]="selectedTipoCargaSobredimensionada === 'otra'">Otra</option>
+            </select>
+          </div>
+        </div>
+        <div *ngIf="(selectedTipoCarga === 'contenedor' &&  selectedTipoContenedor !== 'default')
+        || (selectedTipoCarga === 'carga-suelta')
+        || (selectedTipoCarga === 'maquinaria-pesada' && selectedTipoMaquinariaPesada !== 'default')
+        || (selectedTipoCarga === 'carga-sobredimensionada' && selectedTipoCargaSobredimensionada !== 'default')
+        || (selectedTipoCarga === 'proyecto-especial')"
+        class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <div class="flex items-center gap-3">
+            <h3 class="shrink-0 text-sm font-semibold text-slate-700">Requiere?:</h3>
+            <div class="flex w-full flex-nowrap gap-2">
+            <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="plataforma" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('plataforma')" (change)="onChangeRequeridos('plataforma', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Plataforma</span>
+            </label>
+
+            <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="cama -baja" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('cama -baja')" (change)="onChangeRequeridos('cama -baja', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Cama Baja</span>
+            </label>
+
+            <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="grua" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('grua')" (change)="onChangeRequeridos('grua', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Grúa</span>
+            </label>
+
+            <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="escolta" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('escolta')" (change)="onChangeRequeridos('escolta', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Escolta</span>
+            </label>
+
+            <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="permiso-mtc" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('permiso-mtc')" (change)="onChangeRequeridos('permiso-mtc', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Permiso MTC</span>
+            </label>
+
+            <label *ngIf="selectedTipoCarga == 'carga-suelta'" class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+              <input type="checkbox" value="furgon" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('furgon')" (change)="onChangeRequeridos('furgon', $any($event.target).checked)" />
+              <span class="text-sm text-slate-700">Furgón</span>
+            </label>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
+          <div *ngIf="selectedRequeridos.includes('furgon')">
+            <label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Furgon <span class="text-rose-500">*</span></label>
+            <select
+              class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
+              (change)="onChangeTipoFurgon($event)"
+            >
+              <option value="default" [selected]="selectedTipoFurgon === 'default'">Seleccionar...</option>
+              <option value="furgon-ala-gaviota" [selected]="selectedTipoFurgon === 'furgon-ala-gaviota'">Furgón Ala Gaviota</option>
+              <option value="furgon-cerrado" [selected]="selectedTipoFurgon === 'furgon-cerrado'">Furgón Cerrado</option>
+              <option value="furgon-puerta-lateral" [selected]="selectedTipoFurgon === 'furgon-puerta-lateral'">Furgón Puerta Lateral</option>
+              <option value="furgon-rebatible" [selected]="selectedTipoFurgon === 'furgon-rebatible'">Furgón Rebatible</option>
+              <option value="furgon-refrigerado" [selected]="selectedTipoFurgon === 'furgon-refrigerado'">Furgón Refrigerado</option>
+              <option value="furgon-ventilado" [selected]="selectedTipoFurgon === 'furgon-ventilado'">Furgón Ventilado</option>
+              <option value="furgon-cisterna" [selected]="selectedTipoFurgon === 'furgon-cisterna'">Furgón Cisterna</option>
+              <option value="otra" [selected]="selectedTipoFurgon === 'otra'">Otra</option>
+            </select>
+          </div>
         </div>
       </form>
     </section>
 
     <!-- Here the types of services will be displayed, with their respective statistics and quick access buttons to create
     new requests or view existing ones. -->
-    <ng-container *ngIf="selectedService === 'importacion'">
+    <!-- <ng-container *ngIf="selectedTipoServicio === 'importacion'">
       <app-importacion></app-importacion>
     </ng-container>
 
-    <ng-container *ngIf="selectedService === 'exportacion'">
+    <ng-container *ngIf="selectedTipoServicio === 'exportacion'">
       <app-exportacion></app-exportacion>
-    </ng-container>
+    </ng-container> -->
 
-    <ng-container *ngIf="selectedService === 'carga-suelta'">
+    <!-- <ng-container *ngIf="selectedTipoServicio === 'carga-suelta'">
       <app-carga-suelta></app-carga-suelta>
-    </ng-container>
+    </ng-container> -->
 
-    <div *ngIf="selectedService === 'default'" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div *ngIf="selectedTipoServicio === 'default'" class="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
       <p class="text-sm text-slate-600">Seleccione un Tipo de Servicio</p>
     </div>
-
-    <!-- <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-        <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-sm font-semibold text-slate-700">Solicitudes Recientes</h3>
-            <input class="rounded-md border border-slate-200 px-3 py-1.5 text-sm" placeholder="Buscar..." />
-        </div>
-        <div class="overflow-x-auto">
-            <table class="min-w-full border-separate border-spacing-y-1 text-sm text-slate-700">
-                <thead>
-                    <tr class="text-left text-xs uppercase tracking-wide text-slate-500">
-                        <th class="px-3 py-2">N Solicitud</th>
-                        <th class="px-3 py-2">Cliente</th>
-                        <th class="px-3 py-2">Origen</th>
-                        <th class="px-3 py-2">Destino</th>
-                        <th class="px-3 py-2">Estado</th>
-                        <th class="px-3 py-2">Fecha</th>
-                        <th class="px-3 py-2">Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                      <tr class="rounded bg-slate-50/80">
-                        <td class="px-3 py-2 text-indigo-600">SOL-2024-001</td><td class="px-3 py-2">Ransa Comercial S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Ate Vitarte</td><td class="px-3 py-2"><span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-600">En Proceso</span></td><td class="px-3 py-2">14/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
-                    </tr>
-                      <tr class="rounded bg-slate-50/80">
-                        <td class="px-3 py-2 text-indigo-600">SOL-2024-002</td><td class="px-3 py-2">DHL Supply Chain</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">La Victoria</td><td class="px-3 py-2"><span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-700">Pendiente</span></td><td class="px-3 py-2">14/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
-                    </tr>
-                      <tr class="rounded bg-slate-50/80">
-                        <td class="px-3 py-2 text-indigo-600">SOL-2024-003</td><td class="px-3 py-2">Neptunia S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">San Luis</td><td class="px-3 py-2"><span class="rounded-full bg-emerald-100 px-2 py-0.5 text-xs text-emerald-700">Completado</span></td><td class="px-3 py-2">13/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
-                    </tr>
-                      <tr class="rounded bg-slate-50/80">
-                        <td class="px-3 py-2 text-indigo-600">SOL-2024-004</td><td class="px-3 py-2">Cosmos Agencia Maritima</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Los Olivos</td><td class="px-3 py-2"><span class="rounded-full bg-indigo-100 px-2 py-0.5 text-xs text-indigo-600">En Proceso</span></td><td class="px-3 py-2">13/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
-                    </tr>
-                      <tr class="rounded bg-slate-50/80">
-                        <td class="px-3 py-2 text-indigo-600">SOL-2024-005</td><td class="px-3 py-2">Unimar S.A.</td><td class="px-3 py-2">Callao</td><td class="px-3 py-2">Surquillo</td><td class="px-3 py-2"><span class="rounded-full bg-rose-100 px-2 py-0.5 text-xs text-rose-600">Cancelado</span></td><td class="px-3 py-2">12/07/2024</td><td class="px-3 py-2 text-indigo-600">Ver | Editar</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-            <h3 class="mb-3 text-sm font-semibold text-slate-700">Ordenes de Trabajo Abiertas</h3>
-            <div class="space-y-3 text-sm">
-                <div class="rounded-md border border-slate-100 p-3">
-                    <p class="font-semibold text-indigo-600">OT-2024-047</p>
-                    <p class="text-slate-600">Contenedor 40' - Lima -> Ate</p>
-                    <p class="text-slate-500">Chofer: Carlos Quispe</p>
-                </div>
-                <div class="rounded-md border border-slate-100 p-3">
-                    <p class="font-semibold text-indigo-600">OT-2024-046</p>
-                    <p class="text-slate-600">Contenedor 20' - Callao -> La Victoria</p>
-                    <p class="text-slate-500">Chofer: Luis Mamani</p>
-                </div>
-                <div class="rounded-md border border-slate-100 p-3">
-                    <p class="font-semibold text-indigo-600">OT-2024-045</p>
-                    <p class="text-slate-600">Contenedor 40' - Callao -> Surquillo</p>
-                    <p class="text-slate-500">Chofer: Pedro Huanca</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="rounded-lg border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-            <h3 class="mb-3 text-sm font-semibold text-slate-700">Accesos Rapidos</h3>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Nueva Solicitud</button>
-                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Orden de Trabajo</button>
-                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Ver Solicitudes</button>
-                <button class="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">Reportes</button>
-            </div>
-        </section>
-    </div>
-</section> -->
