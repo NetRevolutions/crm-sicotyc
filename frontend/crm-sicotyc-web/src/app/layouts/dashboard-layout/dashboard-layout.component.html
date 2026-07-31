@@ -1,0 +1,21 @@
+<div class="flex h-screen bg-[#eef2f8]">
+  <app-sidebar [isOpen]="isSidebarOpen()" (navigate)="closeSidebar()"></app-sidebar>
+
+  @if (isSidebarOpen()) {
+    <button
+      type="button"
+      class="fixed inset-0 z-20 bg-slate-900/35 lg:hidden"
+      aria-label="Cerrar menu"
+      (click)="closeSidebar()"
+    ></button>
+  }
+
+  <div class="flex min-w-0 flex-1 flex-col bg-transparent">
+    <app-header (menuToggle)="toggleSidebar()"></app-header>
+    <main class="h-full overflow-y-auto p-3 md:px-3 md:py-3">
+      <section class="mx-auto w-full max-w-none">
+        <router-outlet></router-outlet>
+      </section>
+    </main>
+  </div>
+</div>

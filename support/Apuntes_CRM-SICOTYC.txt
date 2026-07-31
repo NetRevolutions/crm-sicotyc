@@ -5,3 +5,30 @@ Roles:
 4. Coordinador
 5. Chofer
 6. Facturacion
+
+
+
+CRM-Sicotyc/
+│
+├── backend/
+│   │
+│   ├── CRM-Sicotyc.slnx
+│   │
+│   ├── Jarasoft.Sicotyc.API
+│   ├── Jarasoft.Sicotyc.Application
+│   ├── Jarasoft.Sicotyc.Domain
+│   └── Jarasoft.Sicotyc.Infrastructure
+│
+└── frontend/
+    │
+    └── crm-sicotyc-web/
+        │
+        ├── angular.json
+        ├── package.json
+        ├── src/
+        └── node_modules/
+		
+		
+Apuntes referenre a los Roles:
+- Cuando una persona se registra por primera vez directamente desde la web pero ya existe una persona que se ha registrado previamente usando el mismo RUC, por defecto tendra el Rol de "Usuario", a la persona que esta con el rol "AdministradorEmpresa" le llegara un correo y vera una notificacion de que un usuario nuevo se registro con el rol "Usuario" por defecto, si desea cambiarlo debera de entrar a su Mantenimiento de Usuarios y cambiarle el Rol que crea conveninete.
+- Evaluar la posibilidad de crear un Rol para las Agencias y/o Clientes para que le den un seguimiento de sus Ordenes de Servicio.
