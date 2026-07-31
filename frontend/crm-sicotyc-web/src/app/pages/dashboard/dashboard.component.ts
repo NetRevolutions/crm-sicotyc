@@ -7,8 +7,7 @@ import { ExportacionComponent } from '../../components/sicotyc/exportacion/expor
   selector: 'app-dashboard',
   standalone: true,
   imports: [CommonModule, ImportacionComponent, ExportacionComponent],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  templateUrl: './dashboard.component.html'
 })
 export class DashboardComponent {
   selectedTipoServicio: 'default' | 'importacion' | 'exportacion' | 'traslado-interno' | 'traccion' | 'devolucion-vacios' = 'importacion';
