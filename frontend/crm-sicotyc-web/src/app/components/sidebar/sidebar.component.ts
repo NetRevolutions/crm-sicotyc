@@ -1,5 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import {MatIcon, MatIconRegistry } from '@angular/material/icon'
+import { DomSanitizer } from '@angular/platform-browser';
+import { BRIEFCASE, BURGUER_MENU, CHART, CLIPBOARD, CLOSE_SESSION, CLOSE_SIDEBAR, TOOL, WRENCH } from '../../shared/constans/icon';
+
 
 type UserRole = 'Administrador' | 'Supervisor';
 
@@ -18,7 +22,7 @@ interface SidebarSection {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, MatIcon],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss']
 })
@@ -48,6 +52,20 @@ export class SidebarComponent {
   ];
 
   readonly expandedSections = new Set<string>(['Solicitud Servicio']);
+
+  constructor(){
+    const iconRegistry = inject(MatIconRegistry);
+    const sanitizer = inject(DomSanitizer);
+    iconRegistry.addSvgIconLiteral('close-sidebar', sanitizer.bypassSecurityTrustHtml(CLOSE_SIDEBAR));
+    iconRegistry.addSvgIconLiteral('close-session', sanitizer.bypassSecurityTrustHtml(CLOSE_SESSION));
+    iconRegistry.addSvgIconLiteral('briefcase', sanitizer.bypassSecurityTrustHtml(BRIEFCASE));
+    iconRegistry.addSvgIconLiteral('clipboard', sanitizer.bypassSecurityTrustHtml(CLIPBOARD));
+    iconRegistry.addSvgIconLiteral('wrench', sanitizer.bypassSecurityTrustHtml(WRENCH));
+    iconRegistry.addSvgIconLiteral('tool', sanitizer.bypassSecurityTrustHtml(TOOL));
+    iconRegistry.addSvgIconLiteral('chart', sanitizer.bypassSecurityTrustHtml(CHART));
+
+  }
+
 
   get visibleSections(): SidebarSection[] {
     return this.sections.filter((item) => item.roles.includes(this.currentRole));
