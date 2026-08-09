@@ -1,24 +1,21 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ImportacionComponent } from '../../components/sicotyc/importacion/importacion.component';
-import { ExportacionComponent } from '../../components/sicotyc/exportacion/exportacion.component';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-filtro-solicitud-servicio',
   standalone: true,
-  imports: [CommonModule, ImportacionComponent, ExportacionComponent],
-  templateUrl: './dashboard.component.html'
+  imports: [CommonModule],
+  templateUrl: './filtro-solicitud-servicio.html',
 })
-export class DashboardComponent {
+export class FiltroSolicitudServicio {
   selectedTipoServicio: 'default' | 'importacion' | 'exportacion' | 'traslado-interno' | 'traccion' | 'devolucion-vacios' = 'importacion';
   selectedTipoCarga: 'default' | 'contenedor' | 'carga-suelta' | 'maquinaria-pesada' | 'carga-sobredimensionada' | 'proyecto-especial' = 'default';
   selectedTipoContenedor: 'default' | 'dry' | 'reefer' | 'open-top' | 'flat-rack' | 'tank' | 'high-cube' = 'default';
-  selectedTamanioContenedor: '20ft' | '40ft' = '20ft'; //| '45ft'
+  selectedTamanioContenedor: '20ft' | '40ft' = '20ft';
   selectedTipoMaquinariaPesada: 'default' | 'retro-excavadora' | 'excavadora' | 'cargador-frontal' | 'rodillo' | 'motoniveladora' | 'tractor' | 'otra' = 'default';
   selectedTipoCargaSobredimensionada: 'default' | 'estructuras-metalicas' | 'transformadores' | 'tuberias' | 'tanques' | 'bobinas' | 'otra' = 'default';
   selectedTipoFurgon: 'default' | 'furgon-ala-gaviota' | 'furgon-cerrado' | 'furgon-puerta-lateral' | 'furgon-rebatible' | 'furgon-refrigerado' | 'furgon-ventilado' | 'furgon-cisterna' | 'otra' = 'default';
-  selectedRequeridos: Array<'plataforma' | 'cama -baja' | 'grua' | 'escolta' | 'permiso-mtc' | 'furgon'> = [];
-
+  selectedRequeridos: Array<'plataforma' | 'cama-baja' | 'grua' | 'escolta' | 'permiso-mtc' | 'furgon'> = [];
 
   onChangeTipoServicio(event: Event): void {
     const target = event.target as HTMLSelectElement;
@@ -63,6 +60,16 @@ export class DashboardComponent {
   onChangeTipoContenedor(event: Event): void {
     const target = event.target as HTMLSelectElement;
     this.selectedTipoContenedor = (target.value as 'default' | 'dry' | 'reefer' | 'open-top' | 'flat-rack' | 'tank' | 'high-cube');
+
+    if (this.selectedTipoContenedor === 'dry' || this.selectedTipoContenedor === 'reefer') {
+      if (!this.selectedRequeridos.includes('plataforma')) {
+        this.selectedRequeridos = [...this.selectedRequeridos, 'plataforma'];
+      }
+    }
+    else {
+      this.selectedRequeridos = this.selectedRequeridos.filter((item) => item !== 'plataforma');
+    }
+
     if (this.selectedTipoContenedor === 'default') {
       this.selectedTamanioContenedor = '20ft';
       this.selectedTipoMaquinariaPesada = 'default';
@@ -74,7 +81,7 @@ export class DashboardComponent {
 
   onChangeTamanioContenedor(event: Event): void {
     const target = event.target as HTMLSelectElement;
-    this.selectedTamanioContenedor = (target.value as '20ft' | '40ft'); // | '45ft'
+    this.selectedTamanioContenedor = (target.value as '20ft' | '40ft');
   }
 
   onChangeTipoMaquinariaPesada(event: Event): void {
@@ -104,7 +111,7 @@ export class DashboardComponent {
     }
   }
 
-  onChangeRequeridos(value: 'plataforma' | 'cama -baja' | 'grua' | 'escolta' | 'permiso-mtc' | 'furgon', checked: boolean): void {
+  onChangeRequeridos(value: 'plataforma' | 'cama-baja' | 'grua' | 'escolta' | 'permiso-mtc' | 'furgon', checked: boolean): void {
     if (checked) {
       if (!this.selectedRequeridos.includes(value)) {
         this.selectedRequeridos = [...this.selectedRequeridos, value];
@@ -114,5 +121,4 @@ export class DashboardComponent {
 
     this.selectedRequeridos = this.selectedRequeridos.filter((item) => item !== value);
   }
-
 }

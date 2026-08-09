@@ -3,6 +3,7 @@
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
+@use 'tailwindcss';
 @use '@angular/material' as mat;
 
 html {
@@ -49,8 +50,6 @@ body {
   margin: 0;
   height: 100%;
 }
-@import 'tailwindcss';
-
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 :root {

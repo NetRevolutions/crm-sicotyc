@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { SidebarComponent } from '../../components/sidebar/sidebar.component';
-import { HeaderComponent } from '../../components/header/header.component';
+import { SidebarComponent } from '../../sidebar/sidebar.component';
+import { HeaderComponent } from '../../header/header.component';
 
 @Component({
   selector: 'app-dashboard-layout',
