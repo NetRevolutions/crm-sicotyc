@@ -152,7 +152,7 @@
       <div *ngIf="mostrarSolicitante()">
         <div class="mt-4">
           <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-sm font-semibold text-slate-700">Datos del Solicitante</h3>
+            <h3 class="text-sm font-semibold text-slate-700">Datos del Solicitante: {{ detalleDelServicio() }}</h3>
           </div>
         </div>
         <div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
@@ -170,8 +170,8 @@
           </div>
           <div>
             <label class="mb-1.0 block text-sm font-medium text-slate-700">RUC<span class="text-rose-500">*</span></label>
-            <input type="text" class="rounded-md border border-slate-200 px-3 py-2.5 text-sm w-50 mr-1" placeholder="RUC" />
-            <button class="mt-2 rounded-md bg-green-500 px-3 py-2.5 text-sm w-25 font-medium text-white hover:bg-green-600">Validar RUC</button>
+            <input type="text" class="rounded-md border border-slate-200 px-3 py-2.5 text-sm w-50 mr-1" placeholder="RUC" readonly/>
+            <button class="mt-2 rounded-md bg-green-500 px-3 py-2.5 text-sm w-25 font-medium text-white hover:bg-green-600">Buscar RUC</button>
           </div>
         </div>
       </div>
