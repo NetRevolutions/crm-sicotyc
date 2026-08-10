@@ -107,27 +107,22 @@
 							<input type="checkbox" value="plataforma" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('plataforma')" (change)="onChangeRequeridos('plataforma', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Plataforma</span>
 						</label>
-
 						<label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
 							<input type="checkbox" value="cama-baja" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('cama-baja')" (change)="onChangeRequeridos('cama-baja', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Cama Baja</span>
 						</label>
-
 						<label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
 							<input type="checkbox" value="grua" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('grua')" (change)="onChangeRequeridos('grua', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Grúa</span>
 						</label>
-
-						<label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
+						<!-- <label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
 							<input type="checkbox" value="escolta" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('escolta')" (change)="onChangeRequeridos('escolta', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Escolta</span>
 						</label>
-
 						<label class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
 							<input type="checkbox" value="permiso-mtc" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('permiso-mtc')" (change)="onChangeRequeridos('permiso-mtc', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Permiso MTC</span>
-						</label>
-
+						</label> -->
 						<label *ngIf="selectedTipoCarga == 'carga-suelta'" class="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-lg border border-slate-200 px-2 py-2 hover:bg-slate-50">
 							<input type="checkbox" value="furgon" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" [checked]="selectedRequeridos.includes('furgon')" (change)="onChangeRequeridos('furgon', $any($event.target).checked)" />
 							<span class="text-sm text-slate-700">Furgón</span>
@@ -136,7 +131,7 @@
 				</div>
 			</div>
 			<div class="grid grid-cols-1 gap-4 lg:grid-cols-4">
-				<div *ngIf="selectedRequeridos.includes('furgon')">
+				<div *ngIf="selectedRequeridos.includes('furgon') && selectedTipoCarga == 'carga-suelta'">
 					<label class="mb-1.5 block text-sm font-medium text-slate-700">Tipo de Furgon <span class="text-rose-500">*</span></label>
 					<select
 						class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-700 outline-none ring-indigo-200 transition focus:border-indigo-500 focus:ring"
