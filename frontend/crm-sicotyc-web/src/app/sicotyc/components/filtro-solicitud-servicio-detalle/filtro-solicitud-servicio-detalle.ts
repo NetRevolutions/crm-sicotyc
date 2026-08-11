@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, signal } from '@angular/core';
 import { IFiltroSolicitudServicio } from '../../interfaces/filtro-solicitud-servicio.interface';
+import { BuscarEmpresa } from "../buscar-empresa/buscar-empresa";
 
 @Component({
   selector: 'app-filtro-solicitud-servicio-detalle',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BuscarEmpresa],
   templateUrl: './filtro-solicitud-servicio-detalle.html',
   styles: ``,
 })
