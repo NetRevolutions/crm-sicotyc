@@ -1,0 +1,4 @@
+<app-filtro-solicitud-servicio (filtroChange)="onFiltroChange($event)"></app-filtro-solicitud-servicio>
+<div *ngIf="showFiltroSolicitudServicioDetalle()">
+  <app-filtro-solicitud-servicio-detalle [filtroSolicitudServicio]="filtroSolicitudServicio()"></app-filtro-solicitud-servicio-detalle>
+</div>

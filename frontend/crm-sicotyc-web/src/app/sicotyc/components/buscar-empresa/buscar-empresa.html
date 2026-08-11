@@ -1,0 +1,135 @@
+<div class="w-full">
+  <label class="mb-1.0 block text-sm font-medium text-slate-700">RUC<span class="text-rose-500">*</span></label>
+  <div class="flex w-full items-center gap-2 mt-1.5">
+    <input
+      type="text"
+      class="flex-1 rounded-md border border-slate-200 px-3 py-2.5 text-sm"
+      placeholder="RUC - Razón social"
+      [value]="selectedEmpresa"
+      readonly
+    />
+    <button
+      type="button"
+      class="whitespace-nowrap rounded-md bg-green-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-green-600"
+      (click)="openSearchModal()"
+    >
+      Buscar RUC
+    </button>
+  </div>
+</div>
+
+<div *ngIf="isSearchModalOpen" class="fixed inset-0 z-40 flex items-center justify-center bg-black/50 p-4">
+  <div class="w-full max-w-4xl rounded-lg bg-white p-5 shadow-lg">
+    <h2 class="mb-4 text-lg font-semibold text-slate-800">Buscar Empresa</h2>
+
+    <div class="mb-4 grid grid-cols-1 gap-3 md:grid-cols-2">
+      <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">RUC</label>
+        <input
+          type="text"
+          class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+          placeholder="Número de RUC"
+          [(ngModel)]="searchRuc"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-slate-700">Razón Social</label>
+        <input
+          type="text"
+          class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+          placeholder="Razón Social"
+          [(ngModel)]="searchRazonSocial"
+        />
+      </div>
+    </div>
+
+    <div class="mb-4 flex flex-wrap items-center gap-2">
+      <button
+        type="button"
+        class="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        (click)="searchEmpresas()"
+      >
+        Buscar
+      </button>
+      <button
+        type="button"
+        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        (click)="openAddModal()"
+      >
+        Agregar
+      </button>
+      <button
+        type="button"
+        class="ml-auto rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+        (click)="closeSearchModal()"
+      >
+        Cerrar
+      </button>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-200 border border-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold text-slate-700">RUC</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-700">Razon Social</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-700">Condicion</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-700">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white">
+          <tr *ngFor="let empresa of filteredEmpresas">
+            <td class="px-3 py-2 text-slate-700">{{ empresa.ruc }}</td>
+            <td class="px-3 py-2 text-slate-700">{{ empresa.razonSocial }}</td>
+            <td class="px-3 py-2 text-slate-700">{{ empresa.condicion }}</td>
+            <td class="px-3 py-2">
+              <button
+                type="button"
+                class="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-emerald-700"
+                (click)="useEmpresa(empresa)"
+              >
+                Seleccionar
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredEmpresas.length === 0">
+            <td colspan="4" class="px-3 py-3 text-center text-slate-500">No se encontraron resultados</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isAddModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+  <div class="w-full max-w-md rounded-lg bg-white p-5 shadow-lg">
+    <h3 class="mb-4 text-lg font-semibold text-slate-800">Agregar Empresa</h3>
+
+    <div class="mb-4">
+      <label class="mb-1 block text-sm font-medium text-slate-700">RUC</label>
+      <input
+        type="text"
+        class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm"
+        placeholder="Ingrese RUC"
+        [(ngModel)]="addRuc"
+      />
+    </div>
+
+    <div class="flex justify-end gap-2">
+      <button
+        type="button"
+        class="rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700"
+        (click)="addEmpresa()"
+      >
+        Agregar
+      </button>
+      <button
+        type="button"
+        class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+        (click)="closeAddModal()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </div>
+</div>
