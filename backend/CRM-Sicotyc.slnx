@@ -1,6 +1,7 @@
 <Solution>
-  <Project Path="Jarasoft.Sicotyc.API/Jarasoft.Sicotyc.Api.csproj" />
-  <Project Path="Jarasoft.Sicotyc.Application/Jarasoft.Sicotyc.Application.csproj" />
-  <Project Path="Jarasoft.Sicotyc.Domain/Jarasoft.Sicotyc.Domain.csproj" />
-  <Project Path="Jarasoft.Sicotyc.Infrastructure/Jarasoft.Sicotyc.Infraestructure.csproj" />
+  <Project Path="Jarasoft.Sicotyc.API/Jarasoft.Sicotyc.Api.csproj" DisplayName="Jarasoft.Sicotyc.API" Id="976f6e41-b9a6-4dac-adab-b3da866ba089" />
+  <Project Path="Jarasoft.Sicotyc.Application/Jarasoft.Sicotyc.Application.csproj" Id="1f802e2b-e7f0-4342-b1dc-a0556f02ed3d" />
+  <Project Path="Jarasoft.Sicotyc.Domain/Jarasoft.Sicotyc.Domain.csproj" Id="665c9aaa-0f09-437b-8dc7-03485a4b597e" />
+  <Project Path="Jarasoft.Sicotyc.Infrastructure/Jarasoft.Sicotyc.Infrastructure.csproj" Id="15bb43d9-90c6-4bb8-b80a-e252c40a451d" />
+  <Project Path="Jarasoft.Sicotyc.Test/Jarasoft.Sicotyc.Test.csproj" Id="f0762150-a342-4173-8aff-56488bc712c1" />
 </Solution>

@@ -1,24 +1,28 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>277af4d5-bc96-4fa3-8995-c6f39cb00dc0</UserSecretsId>
+    <UserSecretsId>568c02bc-8039-43c9-b878-ba97ebe1df13</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jarasoft.Sicotyc.Application\Jarasoft.Sicotyc.Application.csproj" />
-    <ProjectReference Include="..\Jarasoft.Sicotyc.Infrastructure\Jarasoft.Sicotyc.Infraestructure.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.2.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
+    <Folder Include="Middleware\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Jarasoft.Sicotyc.Application\Jarasoft.Sicotyc.Application.csproj" />
+    <ProjectReference Include="..\Jarasoft.Sicotyc.Infrastructure\Jarasoft.Sicotyc.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
