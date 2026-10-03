@@ -29,6 +29,18 @@ public sealed class GlobalExceptionHandler(
                     "Unauthorized"
                 ),
 
+            ForbiddenException =>
+                (
+                    StatusCodes.Status403Forbidden,
+                    "Forbidden"
+                ),
+
+            NotFoundException =>
+                (
+                    StatusCodes.Status404NotFound,
+                    "Not Found"
+                ),
+
             ConflictException =>
                 (
                     StatusCodes.Status409Conflict,

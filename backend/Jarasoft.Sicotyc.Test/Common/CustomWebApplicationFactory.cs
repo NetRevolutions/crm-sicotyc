@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Jarasoft.Sicotyc.Application.Abstractions.Persistence;
 
-namespace Jarasoft.Sicotyc.Test.Infrastructure;
+namespace Jarasoft.Sicotyc.Test.Common;
 
 public sealed class CustomWebApplicationFactory
     : WebApplicationFactory<Program>
@@ -60,6 +61,12 @@ public sealed class CustomWebApplicationFactory
                 {
                     options.UseSqlite(connection);
                 });
+
+            services.RemoveAll<ICompanyAdministrationLock>();
+
+            services.AddScoped<
+                ICompanyAdministrationLock,
+                TestCompanyAdministrationLock>();
         });        
     }
 

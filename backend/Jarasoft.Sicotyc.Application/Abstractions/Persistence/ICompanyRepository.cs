@@ -14,5 +14,9 @@ namespace Jarasoft.Sicotyc.Application.Abstractions.Persistence
         Task AddAsync(
             Company company,
             CancellationToken cancellationToken = default);
+
+        Task<bool> ExistsByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jarasoft.Sicotyc.Infrastructure.Identity

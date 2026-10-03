@@ -27,5 +27,15 @@ namespace Jarasoft.Sicotyc.Infrastructure.Persistence.Repositories
                 company, 
                 cancellationToken);
         }
+
+        public Task<bool> ExistsByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            return context.Companies
+                .AnyAsync(
+                    x => x.Id == id,
+                    cancellationToken);
+        }
     }
 }

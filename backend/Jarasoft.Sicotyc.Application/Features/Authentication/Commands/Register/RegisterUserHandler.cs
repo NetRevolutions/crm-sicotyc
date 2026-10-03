@@ -1,4 +1,5 @@
-﻿using Jarasoft.Sicotyc.Application.Abstractions.Identity;
+﻿using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
+using Jarasoft.Sicotyc.Application.Abstractions.Identity;
 using Jarasoft.Sicotyc.Application.Abstractions.Persistence;
 using Jarasoft.Sicotyc.Application.Exceptions;
 using Jarasoft.Sicotyc.Domain.Entities;
@@ -69,8 +70,9 @@ public sealed class RegisterUserHandler(
                     company.Id,
                     command.FirstName,
                     command.LastName,
-                    email,
+                    command.Email,
                     command.Password,
+                    ApplicationRoles.User,
                     cancellationToken);
 
             if (!registration.Succeeded)

@@ -1,10 +1,11 @@
 ﻿using FluentAssertions;
 using Jarasoft.Sicotyc.API.Contracts.Authentication;
+using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
 using Jarasoft.Sicotyc.Application.Features.Authentication.Commands.Login;
 using Jarasoft.Sicotyc.Domain.Entities;
 using Jarasoft.Sicotyc.Infrastructure.Identity;
 using Jarasoft.Sicotyc.Infrastructure.Persistence;
-using Jarasoft.Sicotyc.Test.Infrastructure;
+using Jarasoft.Sicotyc.Test.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
@@ -270,10 +271,68 @@ public sealed class LoginControllerTests
         me.Roles
             .Should()
             .Contain(ApplicationRoles.User);
+
+        me.IsSuperAdministrator
+            .Should()
+            .BeFalse();
+    }
+
+    [Fact]
+    public async Task Me_ShouldIdentifySuperAdministrator_WhenUserHasSuperAdministratorRole()
+    {
+        // Arrange
+        var user =
+            await SeedUserAsync(
+                ApplicationRoles.SuperAdministrator);
+
+        var login =
+            await LoginAsync(user);
+
+        using var request =
+            new HttpRequestMessage(
+                HttpMethod.Get,
+                "/api/auth/me");
+
+        request.Headers.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                login.AccessToken);
+
+        // Act
+        var response =
+            await _client.SendAsync(request);
+
+        // Assert
+        response.StatusCode
+            .Should()
+            .Be(HttpStatusCode.OK);
+
+        var me =
+            await response.Content
+                .ReadFromJsonAsync<MeResponse>();
+
+        me.Should().NotBeNull();
+
+        me!.UserId
+            .Should()
+            .Be(user.UserId.ToString());
+
+        me.CompanyId
+            .Should()
+            .Be(user.CompanyId.ToString());
+
+        me.Roles
+            .Should()
+            .Contain(
+                ApplicationRoles.SuperAdministrator);
+
+        me.IsSuperAdministrator
+            .Should()
+            .BeTrue();
     }
 
 
-    // Private methods
+    #region Private Methods
 
     private async Task<TestUserData> SeedUserAsync()
     {
@@ -393,19 +452,116 @@ public sealed class LoginControllerTests
         return result!;
     }
 
+    private async Task<TestUserData> SeedUserAsync(
+    string role = ApplicationRoles.User)
+    {
+        using var scope =
+            _factory.Services.CreateScope();
 
-    // Private Records
+        var context =
+            scope.ServiceProvider
+                .GetRequiredService<SicotycDbContext>();
+
+        await context.Database.EnsureCreatedAsync();
+
+        context.UserRoles.RemoveRange(
+            context.UserRoles);
+
+        context.Users.RemoveRange(
+            context.Users);
+
+        context.Companies.RemoveRange(
+            context.Companies);
+
+        context.Ubigeos.RemoveRange(
+            context.Ubigeos);
+
+        await context.SaveChangesAsync();
+
+        var ubigeo =
+            new Ubigeo(
+                "150101",
+                "LIMA",
+                "LIMA",
+                "LIMA",
+                "LIMA",
+                1,
+                "COSTA");
+
+        context.Ubigeos.Add(ubigeo);
+
+        var company =
+            new Company(
+                "20123456789",
+                "Empresa Login Test SAC",
+                "Av. Test 123",
+                "150101",
+                "empresa@test.com");
+
+        context.Companies.Add(company);
+
+        await context.SaveChangesAsync();
+
+        var userManager =
+            scope.ServiceProvider
+                .GetRequiredService<
+                    UserManager<ApplicationUser>>();
+
+        var user =
+            new ApplicationUser
+            {
+                Id = Guid.NewGuid(),
+                CompanyId = company.Id,
+                FirstName = "Jose",
+                LastName = "Rodriguez",
+                UserName = "login@test.com",
+                Email = "login@test.com",
+                IsActive = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+        var createResult =
+            await userManager.CreateAsync(
+                user,
+                "Test123!");
+
+        createResult.Succeeded
+            .Should()
+            .BeTrue();
+
+        var roleResult =
+            await userManager.AddToRoleAsync(
+                user,
+                role);
+
+        roleResult.Succeeded
+            .Should()
+            .BeTrue();
+
+        return new TestUserData(
+            user.Id,
+            company.Id,
+            user.Email!,
+            "Test123!");
+    }
+
+    #endregion
+
+    #region Private Records
     private sealed record MeResponse(
     string UserId,
     string CompanyId,
     string Email,
     string FirstName,
     string LastName,
-    string[] Roles);
+    string[] Roles,
+    bool IsSuperAdministrator);
 
     private sealed record TestUserData(
     Guid UserId,
     Guid CompanyId,
     string Email,
     string Password);
+
+    #endregion
 }

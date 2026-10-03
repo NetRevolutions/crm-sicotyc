@@ -94,6 +94,10 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IIdentityService, IdentityService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICompanyAdministrationLock,CompanyAdministrationLock>();
 
         return services;
     }

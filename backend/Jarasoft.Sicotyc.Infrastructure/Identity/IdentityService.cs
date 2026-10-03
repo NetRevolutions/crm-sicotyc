@@ -1,11 +1,135 @@
 ﻿using Jarasoft.Sicotyc.Application.Abstractions.Identity;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Jarasoft.Sicotyc.Infrastructure.Identity
 {
     public sealed class IdentityService(
-        UserManager<ApplicationUser> userManager) : IIdentityService
+        UserManager<ApplicationUser> userManager
+        , RoleManager<ApplicationRole> roleManager) : IIdentityService
     {
+
+        public async Task<IdentityOperationResult> SetUserRoleAsync(
+            Guid userId,
+            string role,
+            CancellationToken cancellationToken = default)
+        {
+            var user =
+                await userManager.FindByIdAsync(
+                    userId.ToString());
+
+            if (user is null)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    ["El usuario no existe."]);
+            }
+
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                return new IdentityOperationResult(
+                    false,
+                    [$"El rol '{role}' no existe."]);
+            }
+
+            var currentRoles =
+                await userManager.GetRolesAsync(user);
+
+            if (currentRoles.Count == 1 &&
+                string.Equals(
+                    currentRoles[0],
+                    role,
+                    StringComparison.OrdinalIgnoreCase))
+            {
+                return new IdentityOperationResult(
+                    true,
+                    Array.Empty<string>());
+            }
+
+            if (currentRoles.Count > 0)
+            {
+                var removeResult =
+                    await userManager.RemoveFromRolesAsync(
+                        user,
+                        currentRoles);
+
+                if (!removeResult.Succeeded)
+                {
+                    return new IdentityOperationResult(
+                        false,
+                        removeResult.Errors
+                            .Select(x => x.Description)
+                            .ToArray());
+                }
+            }
+
+            var addResult =
+                await userManager.AddToRoleAsync(
+                    user,
+                    role);
+
+            if (!addResult.Succeeded)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    addResult.Errors
+                        .Select(x => x.Description)
+                        .ToArray());
+            }
+
+            return new IdentityOperationResult(
+                true,
+                Array.Empty<string>());
+        }
+
+        public async Task<IdentityOperationResult> SetUserActiveStatusAsync(
+            Guid userId,
+            bool isActive,
+            CancellationToken cancellationToken = default)
+        {
+            var user =
+                await userManager.FindByIdAsync(
+                    userId.ToString());
+
+            if (user is null)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    ["El usuario no existe."]);
+            }
+
+            user.IsActive = isActive;
+
+            var result =
+                await userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    result.Errors
+                        .Select(x => x.Description)
+                        .ToArray());
+            }
+
+            return new IdentityOperationResult(
+                true,
+                Array.Empty<string>());
+        }
+
+        public async Task<int> CountActiveUsersInRoleAsync(
+            Guid companyId,
+            string role,
+            CancellationToken cancellationToken = default)
+        {
+            var usersInRole =
+                await userManager.GetUsersInRoleAsync(role);
+
+            return usersInRole.Count(
+                x => x.CompanyId == companyId &&
+                     x.IsActive);
+        }
+
         public async Task<bool> EmailExistsAsync(
             string email, 
             CancellationToken cancellationToken = default)
@@ -16,11 +140,12 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
         }
 
         public async Task<IdentityRegistrationResult> CreateUserAsync(
-            Guid companyId, 
-            string firstName, 
-            string lastName, 
-            string email, 
-            string password, 
+            Guid companyId,
+            string firstName,
+            string lastName,
+            string email,
+            string password,
+            string role,
             CancellationToken cancellationToken = default)
         {
             var user = new ApplicationUser
@@ -35,10 +160,10 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                 CreatedAt = DateTime.UtcNow
             };
 
-            // 1. Crear usuario
-            var result = await userManager.CreateAsync(
-                user,
-                password);
+            var result =
+                await userManager.CreateAsync(
+                    user,
+                    password);
 
             if (!result.Succeeded)
             {
@@ -50,10 +175,10 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                         .ToArray());
             }
 
-            // 2. Asignar rol por defecto
-            var roleResult = await userManager.AddToRoleAsync(
-                user, 
-                ApplicationRoles.User);
+            var roleResult =
+                await userManager.AddToRoleAsync(
+                    user,
+                    role);
 
             if (!roleResult.Succeeded)
             {
@@ -61,8 +186,8 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                     false,
                     user.Id,
                     roleResult.Errors
-                    .Select(e => e.Description)
-                    .ToArray());
+                        .Select(x => x.Description)
+                        .ToArray());
             }
 
             return new IdentityRegistrationResult(
@@ -115,6 +240,145 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                 roles.ToArray());
         }
 
+        public async Task<IReadOnlyCollection<IdentityUserListItem>>
+        GetUsersByCompanyAsync(
+            Guid companyId,
+            CancellationToken cancellationToken = default)
+        {
+            var users =
+                await userManager.Users
+                    .Where(x => x.CompanyId == companyId)
+                    .OrderBy(x => x.FirstName)
+                    .ThenBy(x => x.LastName)
+                    .ToListAsync(cancellationToken);
+
+            var result =
+                new List<IdentityUserListItem>();
+
+            foreach (var user in users)
+            {
+                var roles =
+                    await userManager.GetRolesAsync(user);
+
+                result.Add(
+                    new IdentityUserListItem(
+                        user.Id,
+                        user.CompanyId,
+                        user.FirstName,
+                        user.LastName,
+                        user.Email ?? string.Empty,
+                        user.IsActive,
+                        roles.ToArray()));
+            }
+
+            return result;
+        }
+
+        public async Task<IdentityUserListItem?> GetUserByIdAsync(
+            Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            var user =
+                await userManager.Users
+                    .FirstOrDefaultAsync(
+                        x => x.Id == userId,
+                        cancellationToken);
+
+            if (user is null)
+                return null;
+
+            var roles =
+                await userManager.GetRolesAsync(user);
+
+            return new IdentityUserListItem(
+                user.Id,
+                user.CompanyId,
+                user.FirstName,
+                user.LastName,
+                user.Email ?? string.Empty,
+                user.IsActive,
+                roles.ToArray());
+        }
+
+        public async Task<IdentityOperationResult> DeleteUserAsync(
+            Guid userId,
+            CancellationToken cancellationToken = default)
+        {
+            var user =
+                await userManager.FindByIdAsync(
+                    userId.ToString());
+
+            if (user is null)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    ["El usuario no existe."]);
+            }
+
+            var result =
+                await userManager.DeleteAsync(user);
+
+            if (!result.Succeeded)
+            {
+                return new IdentityOperationResult(
+                    false,
+                    result.Errors
+                        .Select(x => x.Description)
+                        .ToArray());
+            }
+
+            return new IdentityOperationResult(
+                true,
+                Array.Empty<string>());
+        }
+
+        public async Task<IdentityBulkOperationResult> DeactivateUsersByCompanyAsync(
+            Guid companyId,
+            CancellationToken cancellationToken = default)
+        {
+            var users =
+                await userManager.Users
+                    .Where(x =>
+                        x.CompanyId == companyId &&
+                        x.IsActive)
+                    .ToListAsync(cancellationToken);
+
+            if (users.Count == 0)
+            {
+                return new IdentityBulkOperationResult(
+                    true,
+                    0,
+                    Array.Empty<string>());
+            }
+
+            var affectedUsers = 0;
+            var errors = new List<string>();
+
+            foreach (var user in users)
+            {
+                user.IsActive = false;
+
+                var result =
+                    await userManager.UpdateAsync(user);
+
+                if (!result.Succeeded)
+                {
+                    errors.AddRange(
+                        result.Errors.Select(
+                            x => $"{user.Email}: {x.Description}"));
+
+                    continue;
+                }
+
+                affectedUsers++;
+            }
+
+            return new IdentityBulkOperationResult(
+                errors.Count == 0,
+                affectedUsers,
+                errors);
+        }
+
         private static IdentityLoginResult FailedLogin()
         {
             return new IdentityLoginResult(
@@ -125,6 +389,6 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                 null,
                 null,
                 Array.Empty<string>());
-        }
+        }        
     }
 }

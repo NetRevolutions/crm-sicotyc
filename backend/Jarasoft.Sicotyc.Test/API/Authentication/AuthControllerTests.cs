@@ -4,12 +4,13 @@ using Jarasoft.Sicotyc.Application.Features.Authentication.Commands.Register;
 using Jarasoft.Sicotyc.Domain.Entities;
 using Jarasoft.Sicotyc.Infrastructure.Identity;
 using Jarasoft.Sicotyc.Infrastructure.Persistence;
-using Jarasoft.Sicotyc.Test.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
 using System.Net.Http.Json;
+using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
+using Jarasoft.Sicotyc.Test.Common;
 
 namespace Jarasoft.Sicotyc.Test.API.Authentication
 {
@@ -350,7 +351,5 @@ namespace Jarasoft.Sicotyc.Test.API.Authentication
                     firstRequest.Email,
                     secondRequest.Email);
         }
-
-
     }
 }

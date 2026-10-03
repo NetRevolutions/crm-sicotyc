@@ -4,7 +4,7 @@ using Jarasoft.Sicotyc.Application.Features.Ubigeos.Queries.GetDistritosByDepart
 using Jarasoft.Sicotyc.Application.Features.Ubigeos.Queries.GetProvinciasByDepartamento;
 using Jarasoft.Sicotyc.Domain.Entities;
 using Jarasoft.Sicotyc.Infrastructure.Persistence;
-using Jarasoft.Sicotyc.Test.Infrastructure;
+using Jarasoft.Sicotyc.Test.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
 using System.Net.Http.Json;

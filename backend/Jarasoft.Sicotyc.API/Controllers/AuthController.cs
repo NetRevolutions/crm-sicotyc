@@ -5,19 +5,31 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
 
 namespace Jarasoft.Sicotyc.API.Controllers;
 
 [ApiController]
 [Route("api/auth")]
 public sealed class AuthController(
-    RegisterUserHandler registerUserHandler,
-    LoginHandler loginHandler
-    /*,UserManager<ApplicationUser> userManager*/)
+    RegisterUserHandler registerUserHandler
+    , LoginHandler loginHandler
+    /*,UserManager<ApplicationUser> userManager*/
+    , ICurrentUser currentUser)
     : ControllerBase
 {
 
-    [Authorize(Roles = "Administrator")]
+    [Authorize(Roles = ApplicationRoles.SuperAdministrator)]
+    [HttpGet("super-admin-test")]
+    public IActionResult SuperAdminTest()
+    {
+        return Ok(new
+        {
+            Message = "Acceso de Super Administrator autorizado."
+        });
+    }
+
+    [Authorize(Roles = ApplicationRoles.Administrator)]
     [HttpGet("admin-test")]
     public IActionResult AdminTest()
     {
@@ -31,39 +43,15 @@ public sealed class AuthController(
     [HttpGet("me")]
     public IActionResult Me()
     {
-        var userId =
-            User.FindFirstValue(
-                JwtRegisteredClaimNames.Sub);
-
-        var email =
-            User.FindFirstValue(
-                JwtRegisteredClaimNames.Email);
-
-        var companyId =
-            User.FindFirstValue(
-                "company_id");
-
-        var firstName =
-            User.FindFirstValue(
-                JwtRegisteredClaimNames.GivenName);
-
-        var lastName =
-            User.FindFirstValue(
-                JwtRegisteredClaimNames.FamilyName);
-
-        var roles =
-            User.FindAll(ClaimTypes.Role)
-                .Select(x => x.Value)
-                .ToArray();
-
         return Ok(new
         {
-            UserId = userId,
-            CompanyId = companyId,
-            Email = email,
-            FirstName = firstName,
-            LastName = lastName,
-            Roles = roles
+            currentUser.UserId,
+            currentUser.CompanyId,
+            currentUser.Email,  
+            currentUser.FirstName,
+            currentUser.LastName,
+            currentUser.Roles,
+            currentUser.IsSuperAdministrator
         });
     }
 
