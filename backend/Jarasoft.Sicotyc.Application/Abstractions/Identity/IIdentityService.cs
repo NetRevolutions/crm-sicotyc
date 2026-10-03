@@ -1,4 +1,6 @@
-﻿namespace Jarasoft.Sicotyc.Application.Abstractions.Identity;
+﻿using Jarasoft.Sicotyc.Application.Common.DTOs;
+
+namespace Jarasoft.Sicotyc.Application.Abstractions.Identity;
 
 public interface IIdentityService
 {
@@ -48,6 +50,11 @@ public interface IIdentityService
         CancellationToken cancellationToken = default);
 
     Task<IdentityBulkOperationResult> DeactivateUsersByCompanyAsync(
+        Guid companyId,
+        CancellationToken cancellationToken = default);
+
+    // IIdentityService
+    Task<IReadOnlyList<IdentityUserDto>> GetUsersByCompanyIdAsync(
         Guid companyId,
         CancellationToken cancellationToken = default);
 }

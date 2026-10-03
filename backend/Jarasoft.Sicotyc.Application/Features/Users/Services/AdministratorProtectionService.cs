@@ -16,7 +16,7 @@ public sealed class AdministratorProtectionService(
         ArgumentNullException.ThrowIfNull(operation);
 
         await unitOfWork.BeginTransactionAsync(
-            IsolationLevel.Serializable,
+            IsolationLevel.ReadCommitted,
             cancellationToken);
 
         try

@@ -1,4 +1,5 @@
 ﻿using Jarasoft.Sicotyc.Application.Abstractions.Identity;
+using Jarasoft.Sicotyc.Application.Common.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,6 +9,41 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
         UserManager<ApplicationUser> userManager
         , RoleManager<ApplicationRole> roleManager) : IIdentityService
     {
+
+
+        public async Task<IReadOnlyList<IdentityUserDto>>
+            GetUsersByCompanyIdAsync(
+                Guid companyId,
+                CancellationToken cancellationToken = default)
+        {
+            var users = await userManager.Users
+                .AsNoTracking()
+                .Where(x => x.CompanyId == companyId)
+                .OrderBy(x => x.Email)
+                .ToListAsync(cancellationToken);
+
+            var result = new List<IdentityUserDto>(
+                users.Count);
+
+            foreach (var user in users)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var roles = await userManager
+                    .GetRolesAsync(user);
+
+                result.Add(new IdentityUserDto
+                {
+                    Id = user.Id,
+                    CompanyId = user.CompanyId,
+                    Email = user.Email ?? string.Empty,
+                    IsActive = user.IsActive,
+                    Roles = roles.ToArray()
+                });
+            }
+
+            return result;
+        }
 
         public async Task<IdentityOperationResult> SetUserRoleAsync(
             Guid userId,
@@ -332,16 +368,31 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
                 Array.Empty<string>());
         }
 
+
         public async Task<IdentityBulkOperationResult> DeactivateUsersByCompanyAsync(
             Guid companyId,
             CancellationToken cancellationToken = default)
         {
-            var users =
-                await userManager.Users
-                    .Where(x =>
-                        x.CompanyId == companyId &&
-                        x.IsActive)
-                    .ToListAsync(cancellationToken);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (companyId == Guid.Empty)
+            {
+                return new IdentityBulkOperationResult(
+                    false,
+                    0,
+                    new[]
+                    {
+                "El identificador de la empresa es obligatorio."
+                    });
+            }
+
+            // 1. Obtener únicamente los usuarios activos
+            //    que pertenecen a la Company indicada.
+            var users = await userManager.Users
+                .Where(x =>
+                    x.CompanyId == companyId &&
+                    x.IsActive)
+                .ToListAsync(cancellationToken);
 
             if (users.Count == 0)
             {
@@ -352,32 +403,45 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
             }
 
             var affectedUsers = 0;
-            var errors = new List<string>();
 
+            // 2. Desactivar los usuarios dentro de
+            //    la transacción abierta por el handler.
             foreach (var user in users)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 user.IsActive = false;
 
-                var result =
-                    await userManager.UpdateAsync(user);
+                var result = await userManager.UpdateAsync(user);
 
+                // 3. Detener la operación ante el primer error.
+                //    El handler provocará el rollback.
                 if (!result.Succeeded)
                 {
-                    errors.AddRange(
-                        result.Errors.Select(
-                            x => $"{user.Email}: {x.Description}"));
+                    var errors = result.Errors
+                        .Select(x =>
+                            $"{user.Email}: {x.Description}")
+                        .ToArray();
 
-                    continue;
+                    return new IdentityBulkOperationResult(
+                        false,
+                        affectedUsers,
+                        errors);
                 }
 
                 affectedUsers++;
             }
 
+            // 4. Comprobar la cancelación antes de
+            //    devolver el resultado.
+            cancellationToken.ThrowIfCancellationRequested();
+
             return new IdentityBulkOperationResult(
-                errors.Count == 0,
+                true,
                 affectedUsers,
-                errors);
+                Array.Empty<string>());
         }
+
 
         private static IdentityLoginResult FailedLogin()
         {

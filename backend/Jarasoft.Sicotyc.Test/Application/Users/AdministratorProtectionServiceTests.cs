@@ -123,7 +123,7 @@ public sealed class AdministratorProtectionServiceTests
 
         unitOfWork.Verify(
             x => x.BeginTransactionAsync(
-                IsolationLevel.Serializable,
+                IsolationLevel.ReadCommitted,
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
@@ -174,7 +174,7 @@ public sealed class AdministratorProtectionServiceTests
 
         unitOfWork.Verify(
             x => x.BeginTransactionAsync(
-                IsolationLevel.Serializable,
+                IsolationLevel.ReadCommitted,
                 It.IsAny<CancellationToken>()),
             Times.Once);
 

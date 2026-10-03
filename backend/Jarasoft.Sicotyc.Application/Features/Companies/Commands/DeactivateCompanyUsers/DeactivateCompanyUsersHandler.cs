@@ -1,4 +1,5 @@
-﻿using Jarasoft.Sicotyc.Application.Abstractions.Identity;
+﻿
+using Jarasoft.Sicotyc.Application.Abstractions.Identity;
 using Jarasoft.Sicotyc.Application.Abstractions.Persistence;
 using Jarasoft.Sicotyc.Application.Common.Exceptions;
 using Jarasoft.Sicotyc.Application.Exceptions;
@@ -16,32 +17,30 @@ public sealed class DeactivateCompanyUsersHandler(
         DeactivateCompanyUsersCommand command,
         CancellationToken cancellationToken = default)
     {
-        // 1. Validar autenticación.
+        // 1. Validar los argumentos.
+        ArgumentNullException.ThrowIfNull(command);
+
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (command.CompanyId == Guid.Empty)
+        {
+            throw new ValidationException(
+                "El identificador de la empresa es obligatorio.");
+        }
+
+        // 2. Validar autenticación.
         if (!currentUser.IsAuthenticated)
         {
             throw new UnauthorizedException(
                 "Usuario no autenticado.");
         }
 
-        // 2. Solo SuperAdministrator puede
-        //    ejecutar una desactivación masiva.
+        // 3. Validar autorización.
         if (!currentUser.IsSuperAdministrator)
         {
             throw new ForbiddenException(
                 "Solo un SuperAdministrator puede desactivar " +
                 "todos los usuarios de una empresa.");
-        }
-
-        // 3. Validar la existencia de la Company.
-        var companyExists =
-            await companyRepository.ExistsByIdAsync(
-                command.CompanyId,
-                cancellationToken);
-
-        if (!companyExists)
-        {
-            throw new NotFoundException(
-                "La empresa no existe.");
         }
 
         // 4. Impedir que el SuperAdministrator
@@ -53,16 +52,29 @@ public sealed class DeactivateCompanyUsersHandler(
                 "de la empresa a la que pertenece su propia cuenta.");
         }
 
-        // 5. Conservar el número de usuarios afectados
-        //    para construir la respuesta original.
         var affectedUsers = 0;
 
-        // 6. Ejecutar la operación bajo el bloqueo
+        // 5. Ejecutar la operación bajo el bloqueo
         //    exclusivo de la Company.
         await administratorProtection.ExecuteAsync(
             command.CompanyId,
             async ct =>
             {
+                ct.ThrowIfCancellationRequested();
+
+                // 6. Comprobar la existencia de la
+                //    Company dentro de la transacción.
+                var companyExists =
+                    await companyRepository.ExistsByIdAsync(
+                        command.CompanyId,
+                        ct);
+
+                if (!companyExists)
+                {
+                    throw new NotFoundException(
+                        "La empresa no existe.");
+                }
+
                 // 7. Revalidar la restricción de
                 //    la Company del solicitante.
                 if (currentUser.CompanyId == command.CompanyId)
@@ -72,16 +84,17 @@ public sealed class DeactivateCompanyUsersHandler(
                         "de la empresa a la que pertenece su propia cuenta.");
                 }
 
-                // 8. Ejecutar la desactivación masiva
-                //    dentro de la transacción existente.
+                // 8. Desactivar los usuarios dentro
+                //    de la transacción existente.
                 var result =
                     await identityService
                         .DeactivateUsersByCompanyAsync(
                             command.CompanyId,
                             ct);
 
-                // 9. Cualquier error provoca rollback
-                //    mediante AdministratorProtectionService.
+                // 9. Ante cualquier error,
+                //    AdministratorProtectionService
+                //    ejecutará el rollback.
                 if (!result.Succeeded)
                 {
                     throw new ValidationException(
@@ -90,13 +103,11 @@ public sealed class DeactivateCompanyUsersHandler(
                             result.Errors));
                 }
 
-                // 10. Guardar el número de usuarios
-                //     afectados por la operación.
                 affectedUsers = result.AffectedUsers;
             },
             cancellationToken);
 
-        // 11. ExecuteAsync ya confirmó la transacción.
+        // 10. La transacción ya fue confirmada.
         return new DeactivateCompanyUsersResult(
             command.CompanyId,
             affectedUsers);

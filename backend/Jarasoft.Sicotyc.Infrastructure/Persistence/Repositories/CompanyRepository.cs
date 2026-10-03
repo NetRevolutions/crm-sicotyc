@@ -8,6 +8,15 @@ namespace Jarasoft.Sicotyc.Infrastructure.Persistence.Repositories
         SicotycDbContext context)
         : ICompanyRepository
     {
+        public async Task<Company?> GetByIdAsync(
+            Guid companyId,
+            CancellationToken cancellationToken = default)
+        {
+            return await context.Companies
+                .FirstOrDefaultAsync(
+                    x => x.Id == companyId,
+                    cancellationToken);
+        }
         public async Task<Company?> GetByRucAsync(
             string ruc, 
             CancellationToken cancellationToken = default)
