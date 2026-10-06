@@ -107,6 +107,17 @@ public sealed class ConfigureJwtBearerOptions(
                     context.Fail("La empresa asociada al token no es válida.");
                     return;
                 }
+
+                var tokenRoles = context.Principal!
+                    .FindAll(ClaimTypes.Role)
+                    .Select(claim => claim.Value)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+                if (!tokenRoles.SetEquals(user.Roles))
+                {
+                    context.Fail("Los roles del usuario han cambiado. Inicie sesión nuevamente.");
+                    return;
+                }
             }
         };        
     }

@@ -130,7 +130,7 @@ Respuesta HTTP
 
 El bloqueo utiliza `LockOwner = 'Transaction'`. Operaciones de una misma Company se serializan; operaciones de Companies diferentes no deberían bloquearse entre sí por el bloqueo de aplicación. Se cambió el aislamiento de `Serializable` a `ReadCommitted` tras observar un deadlock SQL Server 1205; el escenario de Companies diferentes pasó cinco veces consecutivas.
 
-**No está verificado todavía mediante pruebas de rollback de datos** que todas las escrituras Identity se reviertan correctamente ante error/cancelación; esa comprobación corresponde a B.5.6.
+En B.5.6 se implementaron pruebas de escrituras Identity, rollback por excepción/cancelación, liberación del bloqueo y recuperación. El usuario confirmó el 2026-10-04 que las cuatro pruebas pasaron sobre SQL Server. Esto cubre los escenarios probados; no implica verificar todas las operaciones Identity posibles.
 
 ## 6. Invariantes y seguridad
 
@@ -160,7 +160,7 @@ Escenarios confirmados de concurrencia B.5.1–B.5.5: dos desactivaciones indivi
 - Enumeración definitiva de roles en `ApplicationRoles` y `IdentitySeeder`.
 - Rutas exactas de todos los endpoints de administración individual.
 - Registro y scopes reales de todos los servicios Identity/transaccionales.
-- Pruebas de rollback persistido, cancelación y recuperación de B.5.6.
+- B.5.7 aplazado por el usuario el 2026-10-04 hasta disponer de permisos de diagnóstico SQL. Conservar las pruebas; los timeouts y el deadlock reportados siguen sin resolver. B.5.6 fue confirmado por el usuario.
 - B.5.7 (estrés) y B.5.8 (regresión y cierre).
 
 Consultar `docs/IDENTITY_IMPLEMENTACION.md` antes de implementar o modificar cualquiera de estos puntos.

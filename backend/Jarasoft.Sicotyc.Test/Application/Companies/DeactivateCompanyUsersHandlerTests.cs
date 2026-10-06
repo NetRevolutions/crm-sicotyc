@@ -76,7 +76,7 @@ namespace Jarasoft.Sicotyc.Test.Application.Companies
 
             unitOfWork.Verify(
                 x => x.BeginTransactionAsync(
-                    IsolationLevel.Serializable,
+                    IsolationLevel.ReadCommitted,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
 
@@ -154,7 +154,7 @@ namespace Jarasoft.Sicotyc.Test.Application.Companies
 
             unitOfWork.Verify(
                 x => x.BeginTransactionAsync(
-                    IsolationLevel.Serializable,
+                    IsolationLevel.ReadCommitted,
                     It.IsAny<CancellationToken>()),
                 Times.Once);
 

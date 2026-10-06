@@ -5,7 +5,7 @@ El repositorio y los resultados de pruebas actuales deben verificarse antes de a
 No marcar pasos como completados únicamente porque aparezcan propuestos aquí.
 -->
 
-> **Instrucción de continuidad para Codex:** leer primero `../AGENTS.md` y `ARQUITECTURA.md`. El siguiente paso es **42F.7.6.6.B.5.6**. Verificar si `AdministratorProtectionRecoveryTests.cs` existe y ejecutar pruebas de rollback **real de datos** por excepción y cancelación, además de liberación de bloqueo y recuperación. B.5.6 no está confirmado como completado. B.5.7 y B.5.8 siguen pendientes.
+> **Instrucción de continuidad para Codex:** leer primero `../AGENTS.md` y `ARQUITECTURA.md`. B.5.6 fue confirmado por el usuario el 2026-10-04. **B.5.7 está aplazado por decisión del usuario** hasta contar con permisos de diagnóstico SQL. Conservar `CompanyAdministratorsStressTests`; no volver a ejecutar el estrés ni el diagnóstico por ahora. B.5.8 sigue pendiente.
 
 ---
 
@@ -13,7 +13,7 @@ No marcar pasos como completados únicamente porque aparezcan propuestos aquí.
 
 **Fecha de corte:** 2026-10-03  
 **Propósito:** transferencia de contexto a Codex para continuar la implementación del backend.  
-**Estado de referencia:** último paso confirmado: revisión y ajuste de `IdentityService.DeactivateUsersByCompanyAsync` y compilación/pruebas reportadas satisfactorias; **42F.7.6.6.B.5.6 todavía no está confirmado como ejecutado**.
+**Estado de referencia actualizado el 2026-10-04:** **42F.7.6.6.B.5.6 confirmado por el usuario**, quien reportó que todas las pruebas de recuperación pasaron. B.5.7 está aplazado por falta de permisos de diagnóstico; B.5.8 sigue pendiente.
 
 > **Regla de interpretación.** `CONFIRMADO` significa que el usuario informó expresamente que la implementación, compilación o pruebas pasaron, o que proporcionó código existente. `DOCUMENTADO` significa que se conoce la decisión o el código, pero no se dispone de una verificación independiente del repositorio actual. `PROPUESTO` significa que se entregó código o un plan sin confirmación posterior de ejecución. `PENDIENTE` significa trabajo aún por implementar o verificar. Este archivo no sustituye la inspección del árbol Git actual.
 
@@ -26,9 +26,9 @@ El módulo Identity se inició en el **paso 38** y evolucionó desde la integrac
 1. Se consolidó el handler de desactivación masiva en `Application.Features.Companies.Commands.DeactivateCompanyUsers`, descartando el namespace duplicado propuesto bajo `Features.Users.Commands.DeactivateCompanyUsers`.
 2. Se revisó y modificó `IdentityService.DeactivateUsersByCompanyAsync` para comprobar cancelación, omitir usuarios ya inactivos y detenerse ante el primer error de `UserManager.UpdateAsync`.
 3. El usuario confirmó **«Todo OK»** tras compilar y ejecutar las pruebas sugeridas. Esto no acredita por sí solo una prueba específica de rollback de datos.
-4. Se entregó una propuesta inicial de cuatro pruebas de recuperación para **42F.7.6.6.B.5.6**, pero **no existe confirmación de que el archivo se haya creado ni de que esas pruebas se hayan ejecutado o pasado**.
+4. Se implementaron las cuatro pruebas de recuperación para **42F.7.6.6.B.5.6** y el usuario confirmó el 2026-10-04 que todas pasaron sobre SQL Server. Codex verificó compilación y 93 pruebas sin SQL Server; la ejecución de recuperación fue reportada por el usuario.
 
-**Continuar exactamente en 42F.7.6.6.B.5.6:** comprobar el estado real de `AdministratorProtectionRecoveryTests.cs`, adaptar la propuesta al código actual y añadir pruebas de **rollback real de cambios persistidos** tanto por excepción como por cancelación. No dar B.5.6 por terminado con pruebas que solo verifican propagación de excepciones y recuperación del bloqueo.
+**Al retomar 42F.7.6.6.B.5.7 con una cuenta autorizada:** recuperar el gráfico del deadlock y validar estrés con operaciones mixtas sobre la misma Company y Companies distintas, comprobando invariantes, aislamiento y liberación de bloqueos. Conservar las pruebas de recuperación B.5.6.
 
 ## 2. Contexto tecnológico y decisiones arquitectónicas
 
@@ -85,8 +85,8 @@ La numeración de algunos subpasos históricos no está completamente disponible
 | **42F.7.6.6.B.5.3** | Eliminación concurrente con desactivación individual | **CONFIRMADO**, prueba satisfactoria |
 | **42F.7.6.6.B.5.4** | Operaciones concurrentes sobre Companies distintas; corrección del deadlock SQL Server 1205 | **CONFIRMADO**, cinco ejecuciones consecutivas satisfactorias tras cambio de aislamiento |
 | **42F.7.6.6.B.5.5** | Desactivación masiva concurrente con desactivación individual; consolidación de handler y revisión de servicio | **CONFIRMADO** por el usuario tras correcciones y pruebas; conservar la distinción entre reporte y verificación independiente |
-| **42F.7.6.6.B.5.6** | Rollback, cancelación, liberación de bloqueo y recuperación | **PROPUESTO / PENDIENTE DE EJECUCIÓN CONFIRMADA** |
-| **42F.7.6.6.B.5.7** | Pruebas de estrés de solicitudes concurrentes | **PENDIENTE** |
+| **42F.7.6.6.B.5.6** | Rollback, cancelación, liberación de bloqueo y recuperación | **CONFIRMADO** por el usuario el 2026-10-04 |
+| **42F.7.6.6.B.5.7** | Pruebas de estrés de solicitudes concurrentes | **APLAZADO POR EL USUARIO / FALLOS SIN RESOLVER** |
 | **42F.7.6.6.B.5.8** | Refactorización, regresión completa y cierre | **PENDIENTE** |
 
 ## 4. Entidades, relaciones y persistencia
@@ -347,7 +347,38 @@ $env:SICOTYC_TEST_SQLSERVER = "Server=localhost\SQLEXPRESS;Database=Sicotyc_Inte
 | B.5.4 | Desactivaciones en dos Companies distintas | Ambas tienen éxito; cada Company conserva un Administrator activo | **CONFIRMADO**, cinco ejecuciones seguidas tras corregir aislamiento |
 | B.5.5 | Desactivación masiva de Company B y desactivación individual de un usuario de B | La masiva termina correctamente; la individual puede terminar o fallar por validación; todos los usuarios de B quedan inactivos y el SuperAdministrator de A sigue activo | **CONFIRMADO** por reporte del usuario tras correcciones |
 
-### 8.4. B.5.6: propuesta entregada, no validada
+### 8.4. B.5.6: implementación confirmada por el usuario
+
+Se creó `backend/Jarasoft.Sicotyc.Test/Integration/Concurrency/AdministratorProtectionRecoveryTests.cs`
+con los cuatro métodos enumerados abajo. Las pruebas de excepción y cancelación realizan
+la desactivación de dos usuarios mediante `IIdentityService.DeactivateUsersByCompanyAsync`
+(que llama a `UserManager.UpdateAsync`), verifican las escrituras con una consulta sin tracking
+dentro de la transacción y comprueban el rollback desde un scope/DbContext nuevo.
+La prueba de liberación mantiene abierta la primera conexión y verifica que otra operación
+pueda adquirir el bloqueo y confirmar cambios. La recuperación reutiliza la misma instancia
+scoped del servicio, `UnitOfWork` y `DbContext`, y confirma una escritura SQL parametrizada.
+Cada prueba crea su Company y usuarios; la limpieza elimina solo esos datos y reutiliza
+un Ubigeo existente, sin borrarlo. No se modificaron servicios ni reglas de negocio.
+
+**Validación local:** `dotnet build backend/CRM-Sicotyc.slnx --no-restore --verbosity minimal`
+terminó con cero errores y una advertencia existente `CS9113` en `GlobalExceptionHandler`.
+El listado de pruebas (`dotnet test backend/Jarasoft.Sicotyc.Test/Jarasoft.Sicotyc.Test.csproj
+--no-build --list-tests --filter FullyQualifiedName~AdministratorProtectionRecoveryTests
+--verbosity minimal`) confirmó el descubrimiento de los cuatro métodos; no los ejecutó.
+La regresión sin SQL Server (`dotnet test backend/Jarasoft.Sicotyc.Test/Jarasoft.Sicotyc.Test.csproj
+--no-restore --filter 'Category!=SqlServerIntegration' --verbosity minimal`) terminó con
+**93 pruebas satisfactorias, cero fallidas y cero omitidas**. En la primera ejecución fallaron
+dos expectativas antiguas de `DeactivateCompanyUsersHandlerTests` que exigían `Serializable`;
+se actualizaron a `ReadCommitted`, conforme al código y la decisión de B.5.4, y se repitió
+la regresión satisfactoriamente. No se cambió el aislamiento del servicio.
+Las pruebas SQL Server no se ejecutaron desde Codex porque `SICOTYC_TEST_SQLSERVER`
+no está configurada en su sesión. El usuario configuró su terminal y el 2026-10-04
+confirmó: **«ya pasaron todas las pruebas»**, referido a las cuatro pruebas de recuperación.
+**B.5.6 queda confirmado por ese reporte.** No se dispone del log ni de un recuento de
+la regresión SQL Server completa; esa evidencia queda pendiente para el cierre B.5.8.
+La base exclusiva de integración debe tener al menos un Ubigeo.
+
+#### Antecedente de la propuesta inicial
 
 Se propuso `Jarasoft.Sicotyc.Test/Integration/Concurrency/AdministratorProtectionRecoveryTests.cs` con cuatro métodos:
 
@@ -358,7 +389,7 @@ ExecuteAsync_ShouldReleaseLock_AfterRollback
 ExecuteAsync_ShouldAllowNewTransaction_AfterFailure
 ```
 
-**No marcar estos métodos como implementados ni sus pruebas como verdes.** Los dos primeros ejemplos propuestos provocan una excepción/cancelación en el callback, pero **no modifican datos persistidos**; por tanto, por sí solos **no prueban el rollback de cambios en SQL Server**. El siguiente trabajo debe agregar pruebas que modifiquen datos dentro de la transacción, provoquen el fallo y comprueben el estado persistido desde un contexto/ámbito nuevo.
+En la propuesta inicial estos métodos no estaban confirmados como implementados ni ejecutados. Los dos primeros ejemplos provocaban una excepción/cancelación en el callback sin modificar datos persistidos y no demostraban rollback de datos. La implementación actual descrita arriba reemplaza ese enfoque; sus resultados SQL Server siguen pendientes de ejecución.
 
 La propuesta también presupone que `AdministratorProtectionService` está registrado en DI y que `SqlServerWebApplicationFactory` acepta la cadena de conexión; si el proyecto construye el servicio manualmente, reutilizar el patrón real de `CompanyAdministratorsConcurrencyTests`.
 
@@ -385,7 +416,7 @@ La propuesta también presupone que `AdministratorProtectionService` está regis
 
 ## 10. Trabajo pendiente y criterios de aceptación
 
-### Prioridad inmediata — 42F.7.6.6.B.5.6
+### Criterios de B.5.6 — recuperación confirmada por el usuario
 
 1. Inspeccionar el repositorio y comprobar si existe `AdministratorProtectionRecoveryTests.cs`; no duplicarlo si ya existe.
 2. Reutilizar `SqlServerWebApplicationFactory`, los helpers de creación de Company/usuario y el patrón de DI de `CompanyAdministratorsConcurrencyTests`.
@@ -408,13 +439,90 @@ dotnet test --filter "Category=SqlServerIntegration"
 
 ### Después de B.5.6
 
-- **B.5.7 — PENDIENTE:** estrés de múltiples operaciones concurrentes, mismas y distintas Companies, con aserciones sobre invariantes, aislamiento y ausencia de bloqueos persistentes.
+**Incidencia de B.5.7 reportada por el usuario (2026-10-04):** una operación
+`Deactivate` falló al adquirir el bloqueo con código `-1`. Esto confirma que venció
+`@LockTimeout = 10000`; no demuestra por sí solo un deadlock ni su causa.
+La inspección detectó que `IdentityService.CountActiveUsersInRoleAsync` utilizaba
+`GetUsersInRoleAsync` para cargar usuarios de todas las Companies y filtrar en memoria.
+Se reemplazó por un `CountAsync` en SQL filtrado por Company, actividad y rol normalizado,
+usando el `SicotycDbContext` scoped existente. Esto reduce el alcance lógico de la consulta
+y propaga el CancellationToken; la resolución del timeout requiere repetir SQL Server.
+No se alteraron reglas, interfaces, `ReadCommitted`, tiempos de espera ni número de operaciones.
+La expectativa del rechazo en estrés se ajustó al mensaje efectivo de cada handler:
+el mensaje de desactivación no contiene la palabra «último».
+
+Se añadieron `IdentityServiceTests.CountActiveUsersInRoleAsync_ShouldFilterCompanyStatusAndNormalizedRole`
+y `IdentityServiceTests.CountActiveUsersInRoleAsync_ShouldPropagateCancellation` sobre SQLite.
+La primera también comprueba lectura dentro de la transacción y recuento posterior al rollback.
+`dotnet test backend/Jarasoft.Sicotyc.Test/Jarasoft.Sicotyc.Test.csproj --no-restore
+--filter 'Category!=SqlServerIntegration' --verbosity minimal` compiló correctamente
+(advertencia existente CS9113) y finalizó con **95 pruebas satisfactorias, cero fallidas**.
+El timeout SQL Server sigue pendiente de revalidación; no se afirma que haya quedado resuelto.
+
+**Seguimiento (2026-10-04):** el usuario reportó que los errores de bloqueo continúan
+después de ajustar el recuento. Se añadió diagnóstico exclusivamente en
+`CompanyAdministratorsStressTests`, manteniendo carga, aislamiento y esperas.
+Cada operación registra Company, usuario de prueba, tipo, duración y excepción.
+Una conexión observadora consulta cada dos segundos las DMV de sesiones, requests
+y locks durante la carga, filtradas por el ApplicationName único del caso.
+La salida conserva tres snapshots recientes con SPID, transacciones abiertas,
+sesión bloqueadora, tipo/recurso de espera, fragmento de comando y APPLOCK concedido/en espera.
+También registra threads y trabajos pendientes del ThreadPool. No registra cadenas
+de conexión ni parámetros SQL. Si faltan permisos de lectura DMV, registra el código
+del error y conserva el resultado original de las operaciones. No se añaden reintentos
+ni se aceptan los timeouts como resultado válido. La ejecución SQL Server sigue pendiente.
+
+Para capturar el diagnóstico, ejecutar desde `backend` en la terminal configurada:
+
+```powershell
+dotnet test --filter "FullyQualifiedName~CompanyAdministratorsStressTests" --logger "console;verbosity=detailed"
+```
+
+Compartir el caso fallido (companyCount), los bloques `SQL SNAPSHOT`, `APPLOCK`,
+`RESULTADO` y el `Error Message` completo. Esos datos permitirán distinguir la
+cola normal del APPLOCK de un bloqueo SQL que mantiene ocupada la transacción.
+
+El filtro histórico `FullyQualifiedName~CompanyAdministratorsConcurrencyTests` ejecuta
+solo esa clase; no incluye `CompanyAdministratorsStressTests` ni
+`AdministratorProtectionRecoveryTests`. Para todas las pruebas SQL Server usar
+`Category=SqlServerIntegration`; para toda la suite usar `dotnet test` sin filtro,
+desde una terminal con la conexión de integración configurada.
+
+**Validación local de B.5.7 (2026-10-04):**
+`dotnet build backend/CRM-Sicotyc.slnx --no-restore --verbosity minimal` terminó con
+cero errores y cero advertencias. `dotnet test backend/Jarasoft.Sicotyc.Test/Jarasoft.Sicotyc.Test.csproj
+--no-build --list-tests --filter FullyQualifiedName~CompanyAdministratorsStressTests
+--verbosity minimal` detectó los dos casos; este comando no los ejecuta.
+Las pruebas de estrés SQL Server no se ejecutaron desde esta sesión, que no hereda
+la variable configurada en la terminal del usuario. Ejecutar desde `backend`:
+
+```powershell
+dotnet test --filter "FullyQualifiedName~CompanyAdministratorsStressTests"
+```
+
+- **B.5.7 — IMPLEMENTADO / PENDIENTE DE VALIDACIÓN SQL SERVER:** `CompanyAdministratorsStressTests.MixedOperations_ShouldPreserveLastAdministrator_UnderRepeatedConcurrentLoad` tiene dos casos: una Company con ocho administradores (ocho operaciones) y cuatro Companies con ocho administradores cada una (32 operaciones). Cada caso ejecuta tres rondas con datos nuevos. Se mezclan desactivación, cambio de rol y eliminación de usuarios distintos, con un scope por operación y señal común de inicio. Se exige un rechazo por el último administrador y siete éxitos por Company; se comprueban estados y roles persistidos desde otro scope, aislamiento del SuperAdministrator de control y adquisición posterior del bloqueo. Solo se admiten errores de validación del último administrador; deadlocks, timeouts y cancelaciones fallan la prueba. La limpieza elimina exclusivamente las Companies y usuarios propios de cada ronda. No se modificaron servicios, reglas ni aislamiento.
 - **B.5.8 — PENDIENTE:** refactorización prudente, ejecución de regresión completa y cierre documentado del bloque de concurrencia.
 - **SUNAT — ESTADO NO CONFIRMADO:** comprobar si existe y funciona el job asíncrono definido en 40C.
 - **Roles — REVISIÓN DE CONSISTENCIA:** confirmar el catálogo exacto de siete roles en código, migraciones y seeder; no añadir nombres por inferencia.
 - **Endpoints de administración — INVENTARIO:** extraer rutas, métodos HTTP y contratos directamente de controladores y pruebas actuales.
 
 ## 11. Instrucciones operativas para Codex
+
+**Diagnóstico B.5.7 aportado por el usuario (2026-10-04):** en la primera ronda
+con cuatro Companies y 32 operaciones se registraron 26 éxitos, un rechazo
+esperado por último Administrator, cuatro timeouts de APPLOCK (`-1`) y un
+deadlock SQL durante `ChangeRole`. La lectura de diagnóstico falló con SQL 300;
+no hay snapshots para identificar las consultas y recursos del ciclo. La
+optimización del conteo no resolvió el fallo. B.5.7 continúa pendiente.
+Al retomar el paso, recuperar el gráfico desde `system_health` mediante
+`support/diagnostics/SqlServerDeadlockDiagnostics.sql`, de solo lectura, usando
+una cuenta con acceso existente a diagnósticos. El script filtra los eventos
+de `Sicotyc.Stress.` y consulta buffer y archivos retenidos. No se ejecutó
+desde Codex; no se cambian timeout, aislamiento ni reglas de negocio en este
+subpaso. Si no quedan eventos retenidos al retomarlo, repetir el caso y consultar
+enseguida. El usuario indicó que su cuenta no tiene permisos y solicitó aplazar
+estas pruebas y el diagnóstico hasta contar con una cuenta autorizada. Se
+conservan los archivos; no se deshabilitan tests ni se consideran superados.
 
 1. **Primero inspeccionar el código actual**: no recrear handlers, DTO, repositorios ni servicios que ya existen. Priorizar `AdministratorProtectionService`, `ICompanyAdministrationLock`, `IUnitOfWork`, `IdentityService`, `IIdentityService`, `DeactivateCompanyUsersHandler`, `CompanyAdministratorsConcurrencyTests` y `SqlServerWebApplicationFactory`.
 2. Conservar **.NET 10, Clean Architecture, Identity con Guid, SQL Server y handlers sin MediatR**.
@@ -430,6 +538,6 @@ dotnet test --filter "Category=SqlServerIntegration"
 
 Este documento integra el historial recuperable de las conversaciones de implementación, los fragmentos de código compartidos por el usuario y los archivos de handlers y pruebas disponibles en el contexto del proyecto. **No equivale a una auditoría de todos los commits, archivos, migraciones ni resultados de CI.**
 
-Quedan sin verificación documental completa: el desglose exacto de cada subpaso 41 y 42A–42E; el catálogo definitivo de los siete roles; el estado operativo del job SUNAT; las rutas exactas de todos los endpoints de administración; el contenido final en disco de todos los archivos modificados; la comprobación directa de que `UserManager` comparte transacción con `IUnitOfWork`; y la ejecución de las pruebas B.5.6.
+Quedan sin verificación documental completa: el desglose exacto de cada subpaso 41 y 42A–42E; el catálogo definitivo de los siete roles; el estado operativo del job SUNAT; las rutas exactas de todos los endpoints de administración; el log de SQL Server de B.5.6 (confirmado por el usuario); y los resultados SQL Server de B.5.7 y de la regresión completa.
 
-**Marcador de reanudación para Codex:** `42F.7.6.6.B.5.6 — verificar y completar pruebas de rollback real por excepción y cancelación, liberación de bloqueo y recuperación; luego ejecutar regresión de SQL Server. B.5.7 y B.5.8 siguen pendientes.`
+**Marcador de reanudación para Codex:** `B.5.7 aplazado por el usuario hasta disponer de permisos de diagnóstico SQL; conservar pruebas y fallos pendientes. B.5.6 confirmado por el usuario; B.5.8 pendiente.`

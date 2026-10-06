@@ -2,12 +2,14 @@
 using Jarasoft.Sicotyc.Application.Common.DTOs;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Jarasoft.Sicotyc.Infrastructure.Persistence;
 
 namespace Jarasoft.Sicotyc.Infrastructure.Identity
 {
     public sealed class IdentityService(
         UserManager<ApplicationUser> userManager
-        , RoleManager<ApplicationRole> roleManager) : IIdentityService
+        , RoleManager<ApplicationRole> roleManager
+        , SicotycDbContext context) : IIdentityService
     {
 
 
@@ -158,12 +160,19 @@ namespace Jarasoft.Sicotyc.Infrastructure.Identity
             string role,
             CancellationToken cancellationToken = default)
         {
-            var usersInRole =
-                await userManager.GetUsersInRoleAsync(role);
+            var normalizedRole = roleManager.NormalizeKey(role);
 
-            return usersInRole.Count(
-                x => x.CompanyId == companyId &&
-                     x.IsActive);
+            // Filtrar la Company en SQL antes de contar. Obtener todos los
+            // usuarios del rol amplía las lecturas a otras Companies mientras
+            // mantenemos el bloqueo transaccional de la Company actual.
+            return await context.Users
+                .Where(user => user.CompanyId == companyId && user.IsActive)
+                .Where(user => context.UserRoles.Any(userRole =>
+                    userRole.UserId == user.Id &&
+                    context.Roles.Any(applicationRole =>
+                        applicationRole.Id == userRole.RoleId &&
+                        applicationRole.NormalizedName == normalizedRole)))
+                .CountAsync(cancellationToken);
         }
 
         public async Task<bool> EmailExistsAsync(

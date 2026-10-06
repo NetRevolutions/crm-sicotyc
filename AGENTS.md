@@ -82,12 +82,12 @@ Si no existe SQL Server de pruebas o faltan dependencias, explicar la limitació
 ## 8. Estado de continuidad obligatorio
 
 - Último trabajo confirmado: consolidación de `DeactivateCompanyUsersHandler` bajo `Features.Companies`, ajuste de `IdentityService.DeactivateUsersByCompanyAsync` y pruebas anteriores reportadas satisfactorias.
-- **Paso activo: `42F.7.6.6.B.5.6`**: rollback real de datos, cancelación y recuperación transaccional.
-- Las cuatro pruebas iniciales de recuperación fueron **propuestas, no confirmadas como ejecutadas**; además, las pruebas de excepción/cancelación sin escrituras persistidas **no prueban rollback de datos**.
-- Primero inspeccionar si existe `AdministratorProtectionRecoveryTests.cs`. Después crear/adaptar pruebas aisladas que escriban dentro de la transacción, provoquen excepción o cancelación y comprueben los valores persistidos desde otro scope/DbContext.
-- Comprobar liberación de bloqueo y reutilización del servicio después del fallo.
-- **Pendientes posteriores:** B.5.7 (estrés de concurrencia) y B.5.8 (refactorización, regresión y cierre).
-- No marcar B.5.6, B.5.7 o B.5.8 como completados sin resultados verificables.
+- **B.5.6 confirmado por el usuario el 2026-10-04:** las cuatro pruebas de `AdministratorProtectionRecoveryTests` pasaron en su entorno SQL Server. Distinguir ese reporte de una ejecución propia de Codex.
+- **B.5.7 aplazado por el usuario el 2026-10-04:** conservar las pruebas de estrés y el diagnóstico SQL; no volver a ejecutarlos hasta disponer de una cuenta con permisos de diagnóstico. Los timeouts y el deadlock reportados siguen sin resolver; el paso no está completado.
+- Inspeccionar `CompanyAdministratorsStressTests.cs`; valida operaciones mixtas, conservación del último Administrator activo, aislamiento y adquisición posterior de bloqueos.
+- Mantener pruebas de rollback con escrituras reales y comprobación desde otro scope/DbContext; no sustituirlas por callbacks sin escrituras.
+- **Pendiente posterior:** B.5.8 (refactorización, regresión y cierre).
+- No marcar B.5.7 o B.5.8 como completados sin resultados verificables.
 
 ## 9. Forma de trabajar con el usuario
 
