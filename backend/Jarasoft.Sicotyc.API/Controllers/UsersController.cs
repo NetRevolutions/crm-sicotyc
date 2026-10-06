@@ -1,88 +1,164 @@
-using Jarasoft.Sicotyc.Api.Contracts.Users;
-using Jarasoft.Sicotyc.Application.Users;
+﻿using Jarasoft.Sicotyc.API.Contracts.Users;
+using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
+using Jarasoft.Sicotyc.Application.Features.Users.Commands.ChangeUserRole;
+using Jarasoft.Sicotyc.Application.Features.Users.Commands.ChangeUserStatus;
+using Jarasoft.Sicotyc.Application.Features.Users.Commands.CreateUser;
+using Jarasoft.Sicotyc.Application.Features.Users.Commands.DeleteUser;
+using Jarasoft.Sicotyc.Application.Features.Users.Queries.GetUserById;
+using Jarasoft.Sicotyc.Application.Features.Users.Queries.GetUsers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Jarasoft.Sicotyc.Api.Controllers;
+namespace Jarasoft.Sicotyc.API.Controllers;
 
 [ApiController]
 [Route("api/users")]
+[Authorize]
 public sealed class UsersController(
-    ISystemUserRegistrationService registrationService,
-    IApplicationUserQueryService userQueryService) : ControllerBase
+    CreateUserHandler createUserHandler
+    , GetUsersHandler getUsersHandler
+    , GetUserByIdHandler getUserByIdHandler
+    , ChangeUserStatusHandler changeUserStatusHandler
+    , ChangeUserRoleHandler changeUserRoleHandler
+    , DeleteUserHandler deleteUserHandler)
+    : ControllerBase
 {
-    [HttpGet("{id:guid}")]
-    [ProducesResponseType<ApplicationUserResponse>(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<ApplicationUserResponse>> GetByIdAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var user = await userQueryService.GetByIdAsync(id, cancellationToken);
-        if (user is null)
-        {
-            return NotFound();
-        }
 
-        return Ok(new ApplicationUserResponse(
-            user.Id,
-            user.UserName,
-            user.Email,
-            user.PhoneNumber,
-            user.FirstName,
-            user.LastName,
-            user.DocumentType,
-            user.DocumentNumber,
-            user.ApplicationRoleId,
-            user.ApplicationRoleName,
-            user.CompanyIds));
-    }
-
-    [HttpPost("register")]
-    [ProducesResponseType<RegisterSystemUserResponse>(StatusCodes.Status201Created)]
-    [ProducesResponseType<RegisterSystemUserResponse>(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType<RegisterSystemUserResponse>(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> RegisterAsync(RegisterSystemUserRequest request, CancellationToken cancellationToken)
+    [HttpDelete("{id:guid}")]
+    [Authorize(
+    Roles =
+        ApplicationRoles.Administrator
+        + ","
+        + ApplicationRoles.SuperAdministrator)]
+    public async Task<IActionResult> Delete(
+        Guid id,
+        CancellationToken cancellationToken)
     {
-        var result = await registrationService.RegisterAsync(
-            new RegisterSystemUserCommand(
-                request.User.FirstName,
-                request.User.LastName,
-                request.User.DocumentType,
-                request.User.DocumentNumber,
-                request.User.UserName,
-                request.User.Email,
-                request.User.PhoneNumber,
-                request.User.ApplicationRoleId,
-                request.User.Password,
-                request.Company.Ruc,
-                request.Company.BusinessName,
-                request.Company.Address,
-                request.Company.Email,
-                request.Company.Phone,
-                request.Company.IsTransportCompany),
+        await deleteUserHandler.HandleAsync(
+            new DeleteUserCommand(id),
             cancellationToken);
 
-        var response = new RegisterSystemUserResponse(
-            result.Succeeded,
-            result.RequiresCompanyContact,
-            result.Message,
-            result.UserId,
-            result.CompanyId,
-            result.ApplicationRoleId,
-            result.ApplicationRoleName,
-            result.Contact is null
-                ? null
-                : new RegisterCompanyContactResponse(result.Contact.FirstName, result.Contact.LastName, result.Contact.Email),
-            result.Errors);
+        return NoContent();
+    }
 
-        if (result.Succeeded)
-        {
-            return CreatedAtAction(nameof(GetByIdAsync), new { id = result.UserId }, response);
-        }
+    [HttpPatch("{id:guid}/role")]
+    [Authorize(
+    Roles =
+        ApplicationRoles.Administrator
+        + ","
+        + ApplicationRoles.SuperAdministrator)]
+    public async Task<ActionResult<ChangeUserRoleResult>> ChangeRole(
+        Guid id,
+        ChangeUserRoleRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command =
+            new ChangeUserRoleCommand(
+                id,
+                request.Role);
 
-        if (result.RequiresCompanyContact)
-        {
-            return Conflict(response);
-        }
+        var result =
+            await changeUserRoleHandler.HandleAsync(
+                command,
+                cancellationToken);
 
-        return BadRequest(response);
+        return Ok(result);
+    }
+
+    [HttpPatch("{id:guid}/status")]
+    [Authorize(
+    Roles =
+        ApplicationRoles.Administrator
+        + ","
+        + ApplicationRoles.SuperAdministrator)]
+    public async Task<ActionResult<ChangeUserStatusResult>> ChangeStatus(
+        Guid id,
+        ChangeUserStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command =
+            new ChangeUserStatusCommand(
+                id,
+                request.IsActive);
+
+        var result =
+            await changeUserStatusHandler.HandleAsync(
+                command,
+                cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:guid}")]
+    [Authorize(
+    Roles =
+        ApplicationRoles.Administrator
+        + ","
+        + ApplicationRoles.SuperAdministrator)]
+    public async Task<ActionResult<GetUserByIdResult>> GetById(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var query =
+            new GetUserByIdQuery(id);
+
+        var result =
+            await getUserByIdHandler.HandleAsync(
+                query,
+                cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpGet]
+    [Authorize(
+    Roles =
+        ApplicationRoles.Administrator
+        + ","
+        + ApplicationRoles.SuperAdministrator)]
+    public async Task<
+    ActionResult<IReadOnlyCollection<UserListItem>>> GetAll(
+        [FromQuery] Guid? companyId,
+        CancellationToken cancellationToken)
+    {
+        var query =
+            new GetUsersQuery(companyId);
+
+        var result =
+            await getUsersHandler.HandleAsync(
+                query,
+                cancellationToken);
+
+        return Ok(result);
+    }
+
+    [HttpPost]
+    [Authorize(
+        Roles =
+            ApplicationRoles.Administrator
+            + ","
+            + ApplicationRoles.SuperAdministrator)]
+    public async Task<
+        ActionResult<CreateUserResult>> Create(
+        CreateUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command =
+            new CreateUserCommand(
+                request.FirstName,
+                request.LastName,
+                request.Email,
+                request.Password,
+                request.Role,
+                request.CompanyId);
+
+        var result =
+            await createUserHandler.HandleAsync(
+                command,
+                cancellationToken);
+
+        return StatusCode(
+            StatusCodes.Status201Created,
+            result);
     }
 }
