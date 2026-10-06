@@ -1,38 +1,103 @@
-using Jarasoft.Sicotyc.Application.Roles;
-using Jarasoft.Sicotyc.Application.Users;
-using Jarasoft.Sicotyc.Domain.Entities;
-using Jarasoft.Sicotyc.Infraestructure.Persistence;
-using Jarasoft.Sicotyc.Infraestructure.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using Jarasoft.Sicotyc.Application.Abstractions.Authentication;
+using Jarasoft.Sicotyc.Application.Abstractions.Identity;
+using Jarasoft.Sicotyc.Application.Abstractions.Persistence;
+using Jarasoft.Sicotyc.Infrastructure.Authentication;
+using Jarasoft.Sicotyc.Infrastructure.Identity;
+using Jarasoft.Sicotyc.Infrastructure.Persistence;
+using Jarasoft.Sicotyc.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
-namespace Jarasoft.Sicotyc.Infraestructure;
+namespace Jarasoft.Sicotyc.Infrastructure;
 
 public static class DependencyInjection
 {
-    private const string DefaultConnectionName = "DefaultConnection";
-
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString(DefaultConnectionName)
-            ?? configuration["ConnectionStrings:DefaultConnection"]
-            ?? throw new InvalidOperationException(
-                "The SQL Server connection string 'ConnectionStrings:DefaultConnection' was not found. Store it in User Secrets or environment variables.");
+        var connectionString =
+            configuration.GetConnectionString("SicotycDatabase");
 
-        services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(connectionString, sqlServerOptions =>
-                sqlServerOptions.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+        services.AddDbContext<SicotycDbContext>(options =>
+        {
+            options.UseSqlServer(connectionString);
+        });
 
         services
-            .AddIdentityCore<ApplicationUser>()
-            .AddRoles<ApplicationRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
+            .AddIdentityCore<ApplicationUser>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
 
-        services.AddScoped<IApplicationRoleQueryService, ApplicationRoleQueryService>();
-        services.AddScoped<IApplicationUserQueryService, ApplicationUserQueryService>();
-        services.AddScoped<ISystemUserRegistrationService, SystemUserRegistrationService>();
+                options.Password.RequiredLength = 8;
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = 
+                    TimeSpan.FromMinutes(5);
+            })
+            .AddRoles<ApplicationRole>()
+            .AddEntityFrameworkStores<SicotycDbContext>();
+        //.AddSignInManager()
+        //.AddDefaultTokenProviders()
+
+        // Registramos las opciones de JWT
+        services
+            .AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(
+                JwtOptions.SectionName))
+            .Validate(
+                options =>
+                    !string.IsNullOrWhiteSpace(
+                        options.Issuer),
+                "Jwt:Issuer es obligatorio.")
+            .Validate(
+                options =>
+                    !string.IsNullOrWhiteSpace(
+                        options.Audience),
+                "Jwt:Audience es obligatorio.")
+            .Validate(
+                options =>
+                    !string.IsNullOrWhiteSpace(
+                        options.SecretKey),
+                "Jwt:SecretKey es obligatorio.")
+            .Validate(
+                options =>
+                    options.ExpirationMinutes > 0,
+                "Jwt:ExpirationMinutes debe ser mayor que cero.")
+            .ValidateOnStart();
+
+        // Configuramos la autenticación JWT
+        services
+            .AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+
+                options.DefaultChallengeScheme =
+                    JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer();
+        
+        services.AddSingleton<IConfigureOptions<JwtBearerOptions>,ConfigureJwtBearerOptions>();
+
+        // Aca registramos nuestros repositorios
+        services.AddScoped<IUbigeoRepository, UbigeoRepository>();
+        services.AddScoped<ICompanyRepository, CompanyRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddHttpContextAccessor();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICompanyAdministrationLock,CompanyAdministrationLock>();
 
         return services;
     }

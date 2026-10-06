@@ -1,6 +1,19 @@
-@Jarasoft.Sicotyc.Api_HostAddress = http://localhost:5209
+@Jarasoft.Sicotyc.API_HostAddress = http://localhost:5135
 
-GET {{Jarasoft.Sicotyc.Api_HostAddress}}/weatherforecast/
+### Obtener departamentos
+GET {{Jarasoft.Sicotyc.API_HostAddress}}/api/ubigeos/departamentos
+Accept: application/json
+
+###
+
+### Obtener provincias por departamento
+GET {{Jarasoft.Sicotyc.API_HostAddress}}/api/ubigeos/departamentos/LIMA/provincias
+Accept: application/json
+
+###
+
+### Obtener distritos por departamento y provincia
+GET {{Jarasoft.Sicotyc.API_HostAddress}}/api/ubigeos/departamentos/LIMA/provincias/LIMA/distritos
 Accept: application/json
 
 ###

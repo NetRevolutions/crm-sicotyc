@@ -8,10 +8,8 @@
 
   <ItemGroup>
     <Folder Include="Events\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="10.0.9" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="ValueObjects\" />
   </ItemGroup>
 
 </Project>
